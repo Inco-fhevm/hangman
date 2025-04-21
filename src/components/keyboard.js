@@ -1,6 +1,4 @@
-import React from "react";
-
-const Keyboard = () => {
+const Keyboard = ({ onKeyPress }) => {
   // Define the keyboard layout rows
   const rows = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -19,6 +17,7 @@ const Keyboard = () => {
             {row.map((key) => (
               <div
                 key={key}
+                onClick={() => onKeyPress(key)}
                 className="border-2 border-[#143E94] text-[#3673F5] w-12 h-12 m-1 flex items-center justify-center text-xl hover:bg-[#3673F5] hover:text-[#020B20] transition duration-200 ease-in-out cursor-pointer"
               >
                 {key}
