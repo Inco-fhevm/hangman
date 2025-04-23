@@ -100,7 +100,7 @@ const Page = () => {
     <div>
       <Navbar />
       <div className="h-[calc(100vh-136px)] flex w-full gap-8 overflow-hidden relative">
-        <Stage stage={3} />
+        <Stage stage={2} />
 
         <div className="w-full pr-16 mt-6">
           <div className="flex space-x-4 w-full px-8">
