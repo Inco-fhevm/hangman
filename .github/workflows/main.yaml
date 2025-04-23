@@ -126,9 +126,9 @@ jobs:
         run: |
           docker build \
             --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-            -t gcr.io/inco-core/comfy-consumer:latest \
-            -t gcr.io/inco-core/comfy-consumer:${{ steps.version.outputs.new_version }} \
+            -t gcr.io/inco-core/hangman:latest \
+            -t gcr.io/inco-core/hangman:${{ steps.version.outputs.new_version }} \
             .
 
-          docker push gcr.io/inco-core/comfy-consumer:latest
-          docker push gcr.io/inco-core/comfy-consumer:${{ steps.version.outputs.new_version }}
+          docker push gcr.io/inco-core/hangman:latest
+          docker push gcr.io/inco-core/hangman:${{ steps.version.outputs.new_version }}
