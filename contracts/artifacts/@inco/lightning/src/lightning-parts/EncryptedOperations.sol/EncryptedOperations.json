@@ -1,0 +1,1752 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "EncryptedOperations",
+  "sourceName": "@inco/lightning/src/lightning-parts/EncryptedOperations.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "SenderNotAllowedForHandle",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum ETypes",
+          "name": "actual",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "expected",
+          "type": "uint8"
+        }
+      ],
+      "name": "UnexpectedType",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum ETypes",
+          "name": "actual",
+          "type": "uint8"
+        }
+      ],
+      "name": "UnsupportedType",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EAdd",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EBitAnd",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EBitOr",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EBitXor",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "ct",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint8",
+          "name": "toType",
+          "type": "uint8"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ECast",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EDiv",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EEq",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EGe",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EGt",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "ebool",
+          "name": "control",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "ifTrue",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "ifFalse",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EIfThenElse",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ELe",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ELt",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EMax",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EMin",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EMul",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ENe",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "ebool",
+          "name": "operand",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ENot",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "counter",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum ETypes",
+          "name": "randType",
+          "type": "uint8"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ERand",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "counter",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum ETypes",
+          "name": "randType",
+          "type": "uint8"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "upperBound",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ERandBounded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ERem",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ERotl",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ERotr",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EShl",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "EShr",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ESub",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "allow",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "allowTransient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "allowedTransient",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "cleanTransientStorage",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eAdd",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eBitAnd",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eBitOr",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eBitXor",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "ct",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "toType",
+          "type": "uint8"
+        }
+      ],
+      "name": "eCast",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eDiv",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eEq",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eGe",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eGt",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "ebool",
+          "name": "control",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "ifTrue",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "ifFalse",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eIfThenElse",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eLe",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eLt",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eMax",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eMin",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eMul",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eNe",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "ebool",
+          "name": "operand",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eNot",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum ETypes",
+          "name": "randType",
+          "type": "uint8"
+        }
+      ],
+      "name": "eRand",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "upperBound",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "randType",
+          "type": "uint8"
+        }
+      ],
+      "name": "eRandBounded",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eRem",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eRotl",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eRotr",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eShl",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eShr",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eSub",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getEventCounter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "ciphertext",
+          "type": "bytes"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "contractAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "inputType",
+          "type": "uint8"
+        }
+      ],
+      "name": "getInputHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "inputA",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "inputB",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "inputC",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "counter",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "upperBound",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "plaintextBytes",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "handleType",
+          "type": "uint8"
+        }
+      ],
+      "name": "getTrivialEncryptHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "isAllowed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "persistAllowed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
