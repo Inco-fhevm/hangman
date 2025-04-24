@@ -1,10 +1,12 @@
-'use client";';
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { useAccount, useDisconnect } from "wagmi";
 
 const Navbar = () => {
   const { isConnected, address } = useAccount();
   const { disconnect } = useDisconnect();
+  const [isHovered, setIsHovered] = useState(false);
 
   const logout = async () => {
     try {
@@ -22,9 +24,12 @@ const Navbar = () => {
       {address && (
         <div
           onClick={logout}
-          className="border-2 border-[#3673F5] text-[#3673F5] hover:bg-[#3673F5] hover:text-[#020B20] cursor-pointer w-48 h-16 grid place-items-center text-3xl"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          className={`border-2 text-3xl w-48 h-16 grid place-items-center cursor-pointer 
+            ${isHovered ? "bg-red-100 text-red-600 border-red-400" : "text-[#3673F5] border-[#3673F5] hover:bg-[#3673F5] hover:text-[#020B20]"}`}
         >
-          <p>{address.slice(0, 4)}</p>
+          <p>{isHovered ? "Logout" : address.slice(0, 4)}</p>
         </div>
       )}
     </div>

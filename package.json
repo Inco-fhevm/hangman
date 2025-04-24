@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@inco/js": "^0.1.21",
     "@rainbow-me/rainbowkit": "^2.2.4",
     "@tanstack/react-query": "^5.74.4",
     "class-variance-authority": "^0.7.1",
