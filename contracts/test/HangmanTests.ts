@@ -38,14 +38,6 @@ describe("Hangman Tests for word 'word'", function () {
   });
 
   it("Seed Word", async () => {
-    const raw = BigInt(asFourByteHex("word"));
-    const { inputCt } = await encryptValue({
-      value: raw,
-      address: wallet.account.address,
-      config: incoConfig,
-      contractAddress: factoryAddress,
-    });
-
     // 1) Prepare your list of 4-letter words
     const words = [
       "play", "time", "home", "mind", "work", "jump", "farm", "cake",
@@ -59,27 +51,32 @@ describe("Hangman Tests for word 'word'", function () {
       "pace", "quit", "rude", "dope", "tail", "urge", "veto", "yarn",
       "zinc"
     ];
-
-    // 2) Convert each to a 4-byte hex literal
-    const wordBytes: Hex[] = words.map(w => {
-      if (w.length !== 4) throw new Error("All words must be exactly 4 letters");
-      return (
-        "0x" +
-        Buffer.from(w, "ascii")
-          .toString("hex")
-      ) as Hex;
-    });
-
+  
+    // 2) Encrypt each word in parallel, then await them all
+    const wordBytes: Hex[] = await Promise.all(
+      words.map(async (word) => {
+        const raw = BigInt(asFourByteHex(word));
+        const { inputCt } = await encryptValue({
+          value:            raw,
+          address:          wallet.account.address,
+          config:           incoConfig,
+          contractAddress:  factoryAddress,
+        });
+        return inputCt.ciphertext.value as Hex;
+      })
+    );
+    // console.log("wordBytes:", wordBytes);
+  
     // 3) Call seedWords once, passing the entire array
     const txSeed = await wallet.writeContract({
-      address: factoryAddress,
-      abi: factoryAbi,
+      address:      factoryAddress,
+      abi:          factoryAbi,
       functionName: "seedWords",
-      args: [wordBytes],   // note: seedWords(bytes[] memory)
+      args:         [wordBytes],   // bytes[] memory
     });
     await publicClient.waitForTransactionReceipt({ hash: txSeed });
-
   });
+  
 
   it("processes letter guesses one by one on 'word' and wins the game", async () => {
     const raw = BigInt(asFourByteHex("word"));
