@@ -7,20 +7,10 @@ import "hardhat/types/artifacts";
 
 declare module "hardhat/types/artifacts" {
   interface ArtifactsMap {
-    Context: never;
-    IERC20Metadata: never;
-    IERC1155Errors: never;
-    IERC20Errors: never;
-    IERC721Errors: never;
-    ConfidentialERC20: never;
+    
   }
 
   interface ContractTypesMap {
-    Context: never;
-    IERC20Metadata: never;
-    IERC1155Errors: never;
-    IERC20Errors: never;
-    IERC721Errors: never;
-    ConfidentialERC20: never;
+    
   }
 }
