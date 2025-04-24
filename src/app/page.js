@@ -40,7 +40,7 @@ const Page = () => {
   } = useHangmanGame();
 
   return (
-    <div>
+    <div className="md:max-w-screen-2xl mx-auto">
       <Navbar />
       {gameOver ? (
         <GameOverScreen
@@ -52,7 +52,7 @@ const Page = () => {
         <div
           className={`${
             isMobile ? "flex flex-col h-auto" : "h-[calc(100vh-136px)] flex"
-          } w-full gap-2 md:gap-8 overflow-hidden relative`}
+          } w-full gap-2 md:gap-8 relative`}
         >
           <div
             className={`${
@@ -68,7 +68,7 @@ const Page = () => {
             }`}
           >
             {!gameStarted ? (
-              <div className="flex flex-col items-center justify-center h-full pb-20 md:pb-40">
+              <div className="flex flex-col items-center justify-center h-full pb-20 md:pb-40 mt-32 md:mt-0">
                 <StartGameButton
                   onStartGame={handleStartGame}
                   isLoading={startGameLoading}
@@ -76,7 +76,7 @@ const Page = () => {
                 />
               </div>
             ) : (
-              <>
+              <div className="mt-32 md:mt-0">
                 {guessError && <ErrorMessage message={guessError} />}
                 {/* {guessLoading && (
                   <LoadingIndicator message="Processing your guess..." />
@@ -100,7 +100,7 @@ const Page = () => {
                 <div className="mt-6 md:mt-8">
                   <Keyboard onKeyPress={handleVirtualKeyPress} />
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
