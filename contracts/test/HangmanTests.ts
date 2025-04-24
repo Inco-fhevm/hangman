@@ -149,7 +149,7 @@ describe("Hangman Tests for word 'word'", function () {
       "bank", "ship", "bark", "dust", "made", "sake", "corn", "pail",
       "tuck", "boil", "ramp", "vase", "blow", "chat", "drum", "flop",
       "grim", "hazy", "jolt", "keen", "lurk", "moat", "numb", "oath",
-      "pace", "quit", "rude", "scoop", "tail", "urge", "veto", "yarn",
+      "pace", "quit", "rude", "dope", "tail", "urge", "veto", "yarn",
       "zinc"
     ];
 
