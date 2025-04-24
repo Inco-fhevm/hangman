@@ -10,6 +10,7 @@ contract HangmanFactory {
     address public master;
     euint256[] private fourBytes;
     uint256 public currentWord;
+    mapping(address => address) public getGameAddressByPlayer;
 
     constructor(address _master) {
         master = _master;
@@ -56,6 +57,7 @@ contract HangmanFactory {
         game.setWord(word);
 
         emit GameCreated(player, address(game));
+        getGameAddressByPlayer[player] = address(game);
         return address(game);
     }
 
