@@ -26,12 +26,35 @@ contract HangmanFactory {
         fourBytes.push(encryptedWord);
     }
 
+    function seedWords(bytes[] memory inSecret) public onlyMaster {
+        for (uint256 i = 0; i < inSecret.length; i++) {
+            euint256 encryptedWord = e.newEuint256(inSecret[i], msg.sender);
+            e.allow(encryptedWord, address(this));
+            fourBytes.push(encryptedWord);
+        }
+    }
+
     function CreateGame(address player) public returns (address) {
+        require(fourBytes.length > 0, "No words added");
+
+        // pseudo‐random index: hash(timestamp, prevrandao, caller)
+        uint256 rand = uint256(
+            keccak256(
+                abi.encodePacked(
+                    block.timestamp,
+                    block.prevrandao, // in Cancún+PoS
+                    msg.sender
+                )
+            )
+        );
+        uint256 idx = rand % fourBytes.length;
+
+        // deploy & initialize the game
         HangmanGame game = new HangmanGame(player, address(this));
-        euint256 word = fourBytes[currentWord % fourBytes.length];
+        euint256 word = fourBytes[idx];
         e.allow(word, address(game));
         game.setWord(word);
-        currentWord++;
+
         emit GameCreated(player, address(game));
         return address(game);
     }
@@ -118,7 +141,11 @@ contract HangmanGame {
         for (uint8 i = 0; i < 4; i++) {
             ebool f = e.eq(encryptedChars[i], e.asEuint256(charCode));
             flags[i] = f;
-            _tile = e.select(e.and(f, e.eq(_tile, e.asEuint256(100))), e.asEuint256(i + 1), _tile);
+            _tile = e.select(
+                e.and(f, e.eq(_tile, e.asEuint256(100))),
+                e.asEuint256(i + 1),
+                _tile
+            );
         }
         tile = _tile;
         e.allow(tile, address(this));
@@ -144,7 +171,15 @@ contract HangmanGame {
         e.allow(newLives, address(this));
         e.allow(newLives, player);
 
-        emit GuessResult(flags[0], flags[1], flags[2], flags[3], tile, newLives, newWon);
+        emit GuessResult(
+            flags[0],
+            flags[1],
+            flags[2],
+            flags[3],
+            tile,
+            newLives,
+            newWon
+        );
     }
 
     function getCurrentStatus()
@@ -152,7 +187,15 @@ contract HangmanGame {
         view
         returns (ebool, ebool, ebool, ebool, euint256, euint256, ebool)
     {
-        return (revealed[0], revealed[1], revealed[2], revealed[3], tile, lives, hasWon);
+        return (
+            revealed[0],
+            revealed[1],
+            revealed[2],
+            revealed[3],
+            tile,
+            lives,
+            hasWon
+        );
     }
 
     function getTile() public view returns (euint256) {

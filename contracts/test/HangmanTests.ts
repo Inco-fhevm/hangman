@@ -129,6 +129,50 @@ describe("Hangman Tests for word 'word'", function () {
     console.log("decrypted hasWon:", newHasWon);
     console.log("decrypted tile:", tileStatus);
   });
+
+  it("Seed Word", async () => {
+    const raw = BigInt(asFourByteHex("word"));
+    const { inputCt } = await encryptValue({
+      value: raw,
+      address: wallet.account.address,
+      config: incoConfig,
+      contractAddress: factoryAddress,
+    });
+
+    // 1) Prepare your list of 4-letter words
+    const words = [
+      "play", "time", "home", "mind", "work", "jump", "farm", "cake",
+      "bake", "fire", "wind", "gold", "road", "love", "rock", "rain",
+      "star", "fish", "desk", "news", "team", "care", "peak", "golf",
+      "mesh", "ping", "dock", "lamb", "comb", "stem", "grow", "clan",
+      "hint", "glad", "vile", "zone", "xray", "kids", "pony", "germ",
+      "bank", "ship", "bark", "dust", "made", "sake", "corn", "pail",
+      "tuck", "boil", "ramp", "vase", "blow", "chat", "drum", "flop",
+      "grim", "hazy", "jolt", "keen", "lurk", "moat", "numb", "oath",
+      "pace", "quit", "rude", "scoop", "tail", "urge", "veto", "yarn",
+      "zinc"
+    ];
+
+    // 2) Convert each to a 4-byte hex literal
+    const wordBytes: Hex[] = words.map(w => {
+      if (w.length !== 4) throw new Error("All words must be exactly 4 letters");
+      return (
+        "0x" +
+        Buffer.from(w, "ascii")
+          .toString("hex")
+      ) as Hex;
+    });
+
+    // 3) Call seedWords once, passing the entire array
+    const txSeed = await wallet.writeContract({
+      address: factoryAddress,
+      abi: factoryAbi,
+      functionName: "seedWords",
+      args: [wordBytes],   // note: seedWords(bytes[] memory)
+    });
+    await publicClient.waitForTransactionReceipt({ hash: txSeed });
+
+  });
 });
 
 async function decryptHandle(handle: HexString) {
@@ -140,3 +184,4 @@ async function decryptHandle(handle: HexString) {
   });
   return result.value;
 }
+
