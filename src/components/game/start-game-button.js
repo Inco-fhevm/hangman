@@ -1,3 +1,5 @@
+import { ErrorMessage } from "./error-message";
+
 export const StartGameButton = ({ onStartGame, isLoading, error }) => (
   <div className="flex flex-col items-center justify-center">
     {error && <ErrorMessage message={error} onRetry={onStartGame} />}
