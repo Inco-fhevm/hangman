@@ -12,6 +12,8 @@ import {
   useWalletClient,
   useWriteContract,
 } from "wagmi";
+import { useBurnerWallet } from "@/context/burner-wallet-context";
+import { parseEther } from "viem";
 
 export const useHangmanGame = () => {
   const [gameStarted, setGameStarted] = useState(false);
@@ -36,6 +38,12 @@ export const useHangmanGame = () => {
   const walletClient = useWalletClient();
   const chainId = useChainId();
   const { address } = useAccount();
+  const {
+    burnerWallet,
+    createBurnerWallet,
+    hasWallet: hasBurnerWallet,
+    isCreating: isCreatingBurner,
+  } = useBurnerWallet();
 
   // Initialize refs array and check device size
   useEffect(() => {
@@ -68,16 +76,76 @@ export const useHangmanGame = () => {
     }
   }, [correctTiles, incorrectCount]);
 
+  // Clear burner wallet creation errors when wallet becomes available
+  useEffect(() => {
+    if (
+      hasBurnerWallet &&
+      startGameError?.includes("Failed to create burner wallet")
+    ) {
+      setStartGameError(null);
+    }
+  }, [hasBurnerWallet, startGameError]);
+
   const handleStartGame = async () => {
     setStartGameLoading(true);
     setStartGameError(null);
 
     try {
-      const hash = await writeContractAsync({
+      let activeBurnerWallet = burnerWallet;
+
+      // Step 1: Create burner wallet if it doesn't exist
+      if (!hasBurnerWallet) {
+        console.log("Creating burner wallet...");
+        try {
+          activeBurnerWallet = await createBurnerWallet();
+          console.log("✅ Burner wallet created successfully");
+          // Continue with the rest of the function after wallet creation
+        } catch (error) {
+          console.error("Failed to create burner wallet:", error);
+          setStartGameError(
+            "Failed to create burner wallet. Please try again."
+          );
+          return;
+        }
+      }
+
+      // Step 2: Check burner wallet balance and fund if needed
+      const burnerBalance = await publicClient.getBalance({
+        address: activeBurnerWallet.account.address,
+      });
+
+      const requiredAmount = parseEther("0.01");
+      console.log(
+        `Burner balance: ${burnerBalance}, Required: ${requiredAmount}`
+      );
+
+      if (burnerBalance < requiredAmount) {
+        console.log("Funding burner wallet with 0.01 ETH...");
+
+        // Fund burner wallet from main wallet using sendTransaction
+        if (!walletClient.data) {
+          throw new Error("Main wallet not connected");
+        }
+
+        const fundingHash = await walletClient.data.sendTransaction({
+          to: activeBurnerWallet.account.address,
+          value: requiredAmount,
+        });
+
+        await publicClient.waitForTransactionReceipt({
+          hash: fundingHash,
+        });
+
+        console.log("✅ Burner wallet funded successfully");
+      }
+
+      // Step 3: Create game using burner wallet
+      console.log("Creating game with burner wallet...");
+      const hash = await activeBurnerWallet.writeContract({
         address: HANGMAN_FACTORY_CONTRACT_ADDRESS,
         abi: HANGMAN_FACTORY_ABI,
         functionName: "CreateGame",
-        args: [address],
+        args: [activeBurnerWallet.account.address],
       });
 
       const receipt = await publicClient.waitForTransactionReceipt({
@@ -92,7 +160,7 @@ export const useHangmanGame = () => {
         address: HANGMAN_FACTORY_CONTRACT_ADDRESS,
         abi: HANGMAN_FACTORY_ABI,
         functionName: "getGameAddressByPlayer",
-        args: [address],
+        args: [activeBurnerWallet.account.address],
       });
 
       setHangmanContractAddress(gameContractAddress);
@@ -110,6 +178,8 @@ export const useHangmanGame = () => {
           inputRefs.current[0].focus();
         }
       }, 0);
+
+      console.log("🎮 Game started successfully with burner wallet!");
     } catch (error) {
       console.error("Failed to start game:", error);
       setStartGameError(
@@ -137,7 +207,14 @@ export const useHangmanGame = () => {
         setGuessError(null);
 
         try {
-          const hash = await writeContractAsync({
+          // Use burner wallet for guessing letters
+          if (!burnerWallet) {
+            throw new Error(
+              "Burner wallet not available. Please restart the game."
+            );
+          }
+
+          const hash = await burnerWallet.writeContract({
             address: hangmanContractAddress,
             abi: HANGMAN_ABI,
             functionName: "guessLetter",
@@ -157,7 +234,7 @@ export const useHangmanGame = () => {
 
           const decryptedTile = await reEncryptValue({
             chainId,
-            walletClient,
+            walletClient: { data: burnerWallet },
             handle: tile,
           });
 
@@ -359,7 +436,7 @@ export const useHangmanGame = () => {
     activeIndex,
     isMobile,
     inputRefs,
-    startGameLoading,
+    startGameLoading: startGameLoading || isCreatingBurner,
     startGameError,
     guessLoading,
     guessError,

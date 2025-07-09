@@ -5,6 +5,7 @@ import Navbar from "@/components/navbar";
 import { RainbowKitWrapper } from "@/rainbow-wallet/rainbow-provider";
 import { AuthProvider } from "@/auth/auth-context";
 import AuthWrapper from "@/auth/auth-wrapper";
+import { BurnerWalletProvider } from "@/context/burner-wallet-context";
 
 const departureMono = localFont({
   src: "./fonts/DepartureMono-Regular.woff",
@@ -27,16 +28,18 @@ export default function RootLayout({ children }) {
         {" "}
         <RainbowKitWrapper>
           <AuthProvider>
-            <AuthWrapper>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="dark"
-                enableSystem
-                disableTransitionOnChange
-              >
-                {children}
-              </ThemeProvider>
-            </AuthWrapper>
+            <BurnerWalletProvider>
+              <AuthWrapper>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="dark"
+                  enableSystem
+                  disableTransitionOnChange
+                >
+                  {children}
+                </ThemeProvider>
+              </AuthWrapper>
+            </BurnerWalletProvider>
           </AuthProvider>
         </RainbowKitWrapper>
       </body>

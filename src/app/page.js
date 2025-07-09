@@ -12,6 +12,7 @@ import { InputFields } from "@/components/game/input-fields";
 import { IncorrectGuessCounter } from "@/components/game/incorrect-guess-counter";
 import { useHangmanGame } from "@/hooks/use-hangman";
 import { GameOverScreen } from "@/components/game/game-over-screen";
+import { BurnerWalletInfo } from "@/components/game/burner-wallet-info";
 
 const Page = () => {
   const {
@@ -42,6 +43,7 @@ const Page = () => {
   return (
     <div className="md:max-w-screen-2xl mx-auto">
       <Navbar />
+      <BurnerWalletInfo />
       {gameOver ? (
         <GameOverScreen
           hasWon={hasWon}

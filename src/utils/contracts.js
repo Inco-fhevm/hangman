@@ -1,4 +1,3 @@
-export const HANGMAN_CONTRACT_ADDRESS = "";
 export const HANGMAN_ABI = [
   {
     inputs: [
