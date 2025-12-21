@@ -12,7 +12,7 @@ cd into_your_repo
 
 ### **2. Install Dependencies**
 ```sh
-pnpm install
+bun install
 ```
 
 ### **3. Configure Environment Variables**  
@@ -26,12 +26,12 @@ BASE_SEPOLIA_RPC_URL=""  # RPC URL supporting eth_getLogs and eth_getFilteredLog
 
 ### **4. Compile Smart Contracts**
 ```sh
-pnpm hardhat compile
+bun hardhat compile
 ```
 
 ### **5. Run Tests**
 ```sh
-pnpm hardhat test --network baseSepolia
+bun hardhat test --network baseSepolia
 ```
 
 ## **Features**
