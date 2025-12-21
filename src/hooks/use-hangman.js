@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { decryptValue } from "@/utils/inco-lite";
+import { decryptValue, initializeSessionVoucher } from "@/utils/inco-lite";
 import {
   HANGMAN_ABI,
   HANGMAN_FACTORY_ABI,
@@ -73,6 +73,10 @@ export const useHangmanGame = () => {
     setStartGameError(null);
 
     try {
+      // Initialize session voucher for attested decrypt
+      console.log("🎮 Initializing session voucher for game...");
+      await initializeSessionVoucher(walletClient.data, chainId, publicClient);
+
       const hash = await writeContractAsync({
         address: HANGMAN_FACTORY_CONTRACT_ADDRESS,
         abi: HANGMAN_FACTORY_ABI,
@@ -162,6 +166,7 @@ export const useHangmanGame = () => {
             walletClient: walletClient.data,
             handle: tile,
             chainId,
+            publicClient,
           });
 
           const tilePosition = parseInt(decryptedTile.toString());
