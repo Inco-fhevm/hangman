@@ -1,0 +1,360 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ITEELifecycle",
+  "sourceName": "@inco/lightning/src/lightning-parts/interfaces/ITEELifecycle.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "newMrAggregated",
+          "type": "bytes32"
+        }
+      ],
+      "name": "approveNewTeeVersion",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "ecies_pubkey",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct BootstrapResult",
+          "name": "bootstrapResult",
+          "type": "tuple"
+        }
+      ],
+      "name": "bootstrapResultDigest",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes16",
+              "name": "teeTcbSvn",
+              "type": "bytes16"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrSeam",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrsignerSeam",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes8",
+              "name": "seamAttributes",
+              "type": "bytes8"
+            },
+            {
+              "internalType": "bytes8",
+              "name": "tdAttributes",
+              "type": "bytes8"
+            },
+            {
+              "internalType": "bytes8",
+              "name": "xFAM",
+              "type": "bytes8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrTd",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrConfigId",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrOwner",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrOwnerConfig",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "rtMr0",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "rtMr1",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "rtMr2",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "rtMr3",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "reportData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct Td10ReportBody",
+          "name": "tdReport",
+          "type": "tuple"
+        }
+      ],
+      "name": "parseReport",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "rawQuote",
+          "type": "bytes"
+        }
+      ],
+      "name": "parseTd10ReportBody",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes16",
+              "name": "teeTcbSvn",
+              "type": "bytes16"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrSeam",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrsignerSeam",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes8",
+              "name": "seamAttributes",
+              "type": "bytes8"
+            },
+            {
+              "internalType": "bytes8",
+              "name": "tdAttributes",
+              "type": "bytes8"
+            },
+            {
+              "internalType": "bytes8",
+              "name": "xFAM",
+              "type": "bytes8"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrTd",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrConfigId",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrOwner",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "mrOwnerConfig",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "rtMr0",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "rtMr1",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "rtMr2",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "rtMr3",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "reportData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct Td10ReportBody",
+          "name": "report",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "quoteVerifier",
+      "outputs": [
+        {
+          "internalType": "contract IQuoteVerifier",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "newMrAggregated",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "networkPubkey",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct AddNodeResult",
+          "name": "addNodeResult",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes",
+          "name": "quote",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "verifyAddNodeResult",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "ecies_pubkey",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct BootstrapResult",
+          "name": "bootstrapResult",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes",
+          "name": "quote",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "verifyBootstrapResult",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "newMrAggregated",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "networkPubkey",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct UpgradeResult",
+          "name": "upgradeResult",
+          "type": "tuple"
+        },
+        {
+          "internalType": "bytes",
+          "name": "quote",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "verifyUpgradeResult",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

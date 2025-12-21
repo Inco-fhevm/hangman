@@ -1,6 +1,6 @@
 {
 	"devDependencies": {
-		"@inco/js": "^0.1.21",
+		"@inco/js": "^0.7.6-devnet-1",
 		"@nomicfoundation/hardhat-ignition": "^0.15.0",
 		"@nomicfoundation/hardhat-ignition-viem": "^0.15.0",
 		"@nomicfoundation/hardhat-network-helpers": "^1.0.0",
@@ -14,14 +14,13 @@
 		"chai": "^4.2.0",
 		"hardhat": "^2.22.19",
 		"hardhat-gas-reporter": "^1.0.8",
-		"inco-hardhat": "link:",
 		"solidity-coverage": "^0.8.0",
 		"ts-node": ">=8.0.0",
 		"typescript": "~5.0.4",
-		"viem": "^2.7.6"
+		"viem": "^2.43.1"
 	},
 	"dependencies": {
-		"@inco/lightning": "0.1.29",
+		"@inco/lightning": "0.7.6-devnet-1",
 		"@nomicfoundation/hardhat-toolbox": "^5.0.0",
 		"@openzeppelin/contracts": "^5.2.0",
 		"@openzeppelin/contracts-upgradeable": "^5.2.0",
