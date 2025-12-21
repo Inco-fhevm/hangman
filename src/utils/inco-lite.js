@@ -1,172 +1,82 @@
-import {
-  generateSecp256k1Keypair,
-  decodeSecp256k1PublicKey,
-  getEciesEncryptor,
-  incoLiteReencryptor,
-} from "@inco/js/lite";
-import { hexToBytes } from "viem";
-import { getAddress, formatUnits } from "viem";
-import { getActiveLightningDeployment } from "@inco/js/lite";
+import { Lightning } from "@inco/js/lite";
+import { handleTypes } from "@inco/js";
+
+let incoConfig = null;
 
 /**
- * @dev Network configuration constants for Inco FHE operations
- * Base Sepolia testnet identifier for the network
- *
- * NOTE: Currently only operating on Base Sepolia network
- * If supporting additional networks in the future, this would need to be parameterized
+ * Get or initialize the Inco configuration based on the current chain
  */
-export const NETWORK_ID = "baseSepolia";
+export async function getConfig(chainId) {
+  if (incoConfig) return incoConfig;
+
+  console.log(`🔧 Initializing Inco config for chain: ${chainId}`);
+
+  if (chainId === 84532) {
+    incoConfig = await Lightning.latest("devnet", 84532); // Base Sepolia
+  } else {
+    throw new Error(`Unsupported chain ID: ${chainId}`);
+  }
+  return incoConfig;
+}
 
 /**
- * @dev KMS service endpoint for reencryption operations
- * This endpoint is used to communicate with the Inco's Key Management Service
- * for secure key handling and reencryption operations
- *
- * NOTE: This endpoint is specific to Base Sepolia network
- * Currently only operating on Base Sepolia
+ * Encrypt a value for a specific contract and account
  */
-export const KMS_SERVICE_ENDPOINT =
-  "https://grpc.base-sepolia.lightning.testnet.inco.org";
-
-/**
- * @dev Encryption scheme constants
- *
- * ENCRYPTION_SCHEME_ECIES = 1: Represents the ECIES (Elliptic Curve Integrated Encryption Scheme)
- * This value comes from the encryptionSchemes enum where:
- * - tfhe: 0
- * - ecies: 1 (used here)
- * - cryptobox: 2
- *
- * DATA_TYPE_UINT256 = 8: Specifies the data type as UINT256 (euint256) for FHE operations
- * This value comes from the handleTypes enum where euint256 = 8
- * The complete handleTypes enum includes:
- * - ebool: 0
- * - euint4: 1
- * - euint8: 2
- * - euint16: 3
- * - euint32: 4
- * - euint64: 5
- * - euint128: 6
- * - euint160: 7
- * - euint256: 8 (used here)
- * - ebytes64: 9
- * - ebytes128: 10
- * - ebytes256: 11
- */
-const ENCRYPTION_SCHEME_ECIES = 1;
-const DATA_TYPE_UINT256 = 8;
-
-export const getConfig = (chainId) => {
-  return getActiveLightningDeployment(chainId);
-};
-
-/**
- *
- * @example
- * const encryptedValue = await encryptValue({
- *   value: 100,
- *   address: "0x123...",
- *   config: { chainId: 84532, deployedAtAddress: "0xabc...", eciesPublicKey: "0xdef..." },
- *   contractAddress: "0x456..."
- * });
- */
-export const encryptValue = async ({
+export async function encryptValue({
   value,
   address,
-  config,
   contractAddress,
-}) => {
-  // Convert the input value to BigInt for proper encryption
-  const valueBigInt = BigInt(value);
+  chainId,
+}) {
+  const inco = await getConfig(chainId);
 
-  // Format the contract address to checksum format for standardization
-  const checksummedAddress = getAddress(contractAddress);
-  console.log("config", config);
-
-  // Create a plaintext object with context information for encryption
-  // This context includes chain ID, ACL address, user address, and contract address
-  // which are all necessary for proper FHE operations and access control
-  const plaintextWithContext = {
-    plaintext: {
-      scheme: ENCRYPTION_SCHEME_ECIES,
-      value: valueBigInt,
-      type: DATA_TYPE_UINT256,
-    },
-    context: {
-      hostChainId: BigInt(config.chainId),
-      aclAddress: config.executorAddress,
-      userAddress: address,
-      contractAddress: checksummedAddress,
-    },
-  };
-
-  // Generate an ephemeral keypair for this encryption session
-  // Using an ephemeral keypair enhances security by ensuring forward secrecy
-  const ephemeralKeypair = await generateSecp256k1Keypair();
-
-  // Decode the ECIES public key from hex format to the required format for encryption
-  const eciesPubKey = decodeSecp256k1PublicKey(
-    hexToBytes(config.eciesPublicKey)
-  );
-
-  // Get an ECIES encryptor using the public key and the generated ephemeral keypair
-  const encryptor = getEciesEncryptor({
-    scheme: ENCRYPTION_SCHEME_ECIES,
-    pubKeyA: eciesPubKey,
-    privKeyB: ephemeralKeypair,
+  const encryptedData = await inco.encrypt(BigInt(value), {
+    accountAddress: address,
+    dappAddress: contractAddress,
+    handleType: handleTypes.euint256,
   });
 
-  // Encrypt the data with the context information
-  const encryptedData = await encryptor(plaintextWithContext);
+  console.log("Encrypted data: ", encryptedData);
 
-  // Return the encrypted data as inputCt (ciphertext)
-  return { inputCt: encryptedData };
-};
+  return encryptedData;
+}
 
 /**
- *
- * This function takes an encrypted value handle and performs reencryption
- * through the KMS service, then decrypts it to obtain the original value.
- *
- * @param {Object} params - The reencryption parameters
- * @param {bigint} params.chainId - The ID of the chain
- * @param {Object} params.walletClient - The wallet client for authentication
- * @param {Object} params.handle - The handle of the encrypted value to decrypt
- *
- * @returns {Promise<string>} The decrypted value formatted as a string
- *
- * @throws {Error} If any required parameters are missing or if reencryption fails
- *
- * @example
- * const decryptedValue = await reEncryptValue({
- *   chainId: 84532,
- *   walletClient: yourWalletClient,
- *   handle: encryptionHandle
- * });
+ * Re-encrypt and decrypt a handle for a specific wallet
  */
-export const reEncryptValue = async ({ chainId, walletClient, handle }) => {
-  // Validate that all required parameters are provided
-  if (!chainId || !walletClient || !handle) {
-    throw new Error("Missing required parameters for creating reencryptor");
-  }
+export async function decryptValue({ walletClient, handle, chainId }) {
+  const inco = await getConfig(chainId);
 
-  try {
-    // Create a reencryptor using the KMS service
-    const reencryptor = await incoLiteReencryptor({
-      chainId: chainId,
-      walletClient: walletClient.data,
-      kmsConnectRpcEndpointOrClient: KMS_SERVICE_ENDPOINT,
-    });
+  // Get attested decrypt for the wallet
+  const attestedDecrypt = await inco.attestedDecrypt(walletClient, [handle]);
 
-    // This sends the encrypted handle to the KMS service which reencrypts it
-    const decryptedResult = await reencryptor({
-      handle,
-    });
+  console.log("Attested decrypt: ", attestedDecrypt[0].plaintext.value%4n);
 
-    console.log("Decrypted result:", decryptedResult);
+  // Return the decrypted value
+  return attestedDecrypt[0].plaintext.value;
+}
 
-    return decryptedResult.value;
-  } catch (error) {
-    throw new Error(`Failed to create reencryptor: ${error.message}`);
-  }
-};
+/**
+ * Get the fee required for Inco operations
+ */
+export async function getFee(chainId) {
+  const inco = await getConfig(chainId);
+
+  // Read the fee from the Lightning contract
+  const fee = await inco.publicClient.readContract({
+    address: inco.executorAddress,
+    abi: [
+      {
+        type: "function",
+        inputs: [],
+        name: "getFee",
+        outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
+        stateMutability: "pure",
+      },
+    ],
+    functionName: "getFee",
+  });
+
+  console.log("Fee: ", fee);
+  return fee;
+}

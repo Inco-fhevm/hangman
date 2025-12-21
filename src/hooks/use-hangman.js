@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { reEncryptValue } from "@/utils/inco-lite";
+import { decryptValue } from "@/utils/inco-lite";
 import {
   HANGMAN_ABI,
   HANGMAN_FACTORY_ABI,
@@ -155,10 +155,12 @@ export const useHangmanGame = () => {
             args: [],
           });
 
-          const decryptedTile = await reEncryptValue({
-            chainId,
-            walletClient,
+          console.log("Tile: ", tile);
+
+          const decryptedTile = await decryptValue({
+            walletClient: walletClient.data,
             handle: tile,
+            chainId,
           });
 
           const tilePosition = parseInt(decryptedTile.toString());
