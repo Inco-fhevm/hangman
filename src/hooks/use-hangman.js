@@ -146,6 +146,7 @@ export const useHangmanGame = () => {
 
           const receipt = await publicClient.waitForTransactionReceipt({
             hash,
+            confirmations: 5,
           });
 
           const tile = await publicClient.readContract({

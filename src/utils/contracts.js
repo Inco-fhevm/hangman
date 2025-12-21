@@ -176,7 +176,7 @@ export const HANGMAN_ABI = [
 ];
 
 export const HANGMAN_FACTORY_CONTRACT_ADDRESS =
-  "0x798e0ff7ce0193cb1f4b46a121fdf8382cb5827f";
+  "0x7d73b3b90fb4adfa42e19d396eb2a3765188c3f0";
 export const HANGMAN_FACTORY_ABI = [
   {
     inputs: [

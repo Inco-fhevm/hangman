@@ -45,7 +45,7 @@ describe("Hangman Tests for word 'word'", function () {
     console.log(`✅ Factory deployed at: ${factoryAddress}`);
   });
 
-  it("Seed Word", async () => {
+  it.only("Seed Word", async () => {
     // 1) Prepare your list of 4-letter words
     const words = [
       "play",
@@ -84,8 +84,8 @@ describe("Hangman Tests for word 'word'", function () {
       "glad",
       "vile",
       "zone",
-      "xray",
-      "kids",
+      "test",
+      "teal",
       "pony",
       "germ",
       "bank",
@@ -107,7 +107,7 @@ describe("Hangman Tests for word 'word'", function () {
       "grim",
       "hazy",
       "jolt",
-      "keen",
+      "beak",
       "lurk",
       "moat",
       "numb",
@@ -148,7 +148,7 @@ describe("Hangman Tests for word 'word'", function () {
     await publicClient.waitForTransactionReceipt({ hash: txSeed });
   });
 
-  it.only("processes letter guesses one by one on 'word' and wins the game", async () => {
+  it("processes letter guesses one by one on 'word' and wins the game", async () => {
     // Add first word "word"
     const raw1 = BigInt(asFourByteHex("word"));
     const inputCt1: `0x${string}` = await encryptValue({
