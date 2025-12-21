@@ -13,76 +13,8 @@ export interface EncryptedInput$Type {
   "sourceName": "@inco/lightning/src/lightning-parts/EncryptedInput.sol",
   "abi": [
     {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "externalHandle",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "computedHandle",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "uint256",
-          "name": "chainId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "aclAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "userAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "contractAddress",
-          "type": "address"
-        }
-      ],
-      "name": "ExternalHandleDoesNotMatchComputedHandle",
-      "type": "error"
-    },
-    {
       "inputs": [],
-      "name": "FeeNotPaid",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        }
-      ],
       "name": "HandleAlreadyExists",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "verifyingContract",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes4",
-          "name": "callFunction",
-          "type": "bytes4"
-        },
-        {
-          "internalType": "bytes",
-          "name": "argData",
-          "type": "bytes"
-        }
-      ],
-      "name": "ProofVerificationFailed",
       "type": "error"
     },
     {
@@ -100,31 +32,6 @@ export interface EncryptedInput$Type {
       ],
       "name": "SenderNotAllowedForHandle",
       "type": "error"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "eventId",
-          "type": "uint256"
-        }
-      ],
-      "name": "Allow",
-      "type": "event"
     },
     {
       "anonymous": false,
@@ -149,6 +56,12 @@ export interface EncryptedInput$Type {
         },
         {
           "indexed": false,
+          "internalType": "enum ETypes",
+          "name": "inputType",
+          "type": "uint8"
+        },
+        {
+          "indexed": false,
           "internalType": "bytes",
           "name": "ciphertext",
           "type": "bytes"
@@ -161,25 +74,6 @@ export interface EncryptedInput$Type {
         }
       ],
       "name": "NewInput",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "eventId",
-          "type": "uint256"
-        }
-      ],
-      "name": "Reveal",
       "type": "event"
     },
     {
@@ -243,68 +137,6 @@ export interface EncryptedInput$Type {
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        },
-        {
-          "components": [
-            {
-              "internalType": "address",
-              "name": "sharer",
-              "type": "address"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "bytes32",
-                  "name": "sessionNonce",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "address",
-                  "name": "verifyingContract",
-                  "type": "address"
-                },
-                {
-                  "internalType": "bytes4",
-                  "name": "callFunction",
-                  "type": "bytes4"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "sharerArgData",
-                  "type": "bytes"
-                }
-              ],
-              "internalType": "struct AllowanceVoucher",
-              "name": "voucher",
-              "type": "tuple"
-            },
-            {
-              "internalType": "bytes",
-              "name": "voucherSignature",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes",
-              "name": "requesterArgData",
-              "type": "bytes"
-            }
-          ],
-          "internalType": "struct AllowanceProof",
-          "name": "proof",
-          "type": "tuple"
-        }
-      ],
-      "name": "claimHandle",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "cleanTransientStorage",
       "outputs": [],
@@ -325,26 +157,34 @@ export interface EncryptedInput$Type {
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getFee",
-      "outputs": [
+      "inputs": [
         {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
+          "internalType": "bytes",
+          "name": "ciphertext",
+          "type": "bytes"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "contractAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "inputType",
+          "type": "uint8"
         }
       ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "getNextEventId",
+      "name": "getInputHandle",
       "outputs": [
         {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
         }
       ],
       "stateMutability": "view",
@@ -363,9 +203,116 @@ export interface EncryptedInput$Type {
           "type": "uint8"
         },
         {
-          "internalType": "bytes",
-          "name": "packedInputs",
-          "type": "bytes"
+          "internalType": "bytes32",
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "inputA",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "inputB",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "inputC",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "counter",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "upperBound",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
         }
       ],
       "name": "getOpResultHandle",
@@ -400,19 +347,6 @@ export interface EncryptedInput$Type {
           "type": "bytes32"
         }
       ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "incoVerifier",
-      "outputs": [
-        {
-          "internalType": "contract IIncoVerifier",
-          "name": "",
-          "type": "address"
-        }
-      ],
       "stateMutability": "view",
       "type": "function"
     },
@@ -443,51 +377,8 @@ export interface EncryptedInput$Type {
     {
       "inputs": [
         {
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        }
-      ],
-      "name": "isRevealed",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes",
-          "name": "input",
-          "type": "bytes"
-        },
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "newEaddress",
-      "outputs": [
-        {
-          "internalType": "eaddress",
-          "name": "newValue",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes",
-          "name": "input",
+          "name": "ciphertext",
           "type": "bytes"
         },
         {
@@ -504,14 +395,14 @@ export interface EncryptedInput$Type {
           "type": "bytes32"
         }
       ],
-      "stateMutability": "payable",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [
         {
           "internalType": "bytes",
-          "name": "input",
+          "name": "ciphertext",
           "type": "bytes"
         },
         {
@@ -528,7 +419,7 @@ export interface EncryptedInput$Type {
           "type": "bytes32"
         }
       ],
-      "stateMutability": "payable",
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -553,19 +444,6 @@ export interface EncryptedInput$Type {
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        }
-      ],
-      "name": "reveal",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     }
   ],

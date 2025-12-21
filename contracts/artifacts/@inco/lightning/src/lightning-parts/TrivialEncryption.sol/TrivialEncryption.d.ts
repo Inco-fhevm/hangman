@@ -15,27 +15,6 @@ export interface TrivialEncryption$Type {
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "verifyingContract",
-          "type": "address"
-        },
-        {
-          "internalType": "bytes4",
-          "name": "callFunction",
-          "type": "bytes4"
-        },
-        {
-          "internalType": "bytes",
-          "name": "argData",
-          "type": "bytes"
-        }
-      ],
-      "name": "ProofVerificationFailed",
-      "type": "error"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes32",
           "name": "handle",
           "type": "bytes32"
@@ -48,50 +27,6 @@ export interface TrivialEncryption$Type {
       ],
       "name": "SenderNotAllowedForHandle",
       "type": "error"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "eventId",
-          "type": "uint256"
-        }
-      ],
-      "name": "Allow",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "eventId",
-          "type": "uint256"
-        }
-      ],
-      "name": "Reveal",
-      "type": "event"
     },
     {
       "anonymous": false,
@@ -187,25 +122,6 @@ export interface TrivialEncryption$Type {
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "value",
-          "type": "address"
-        }
-      ],
-      "name": "asEaddress",
-      "outputs": [
-        {
-          "internalType": "eaddress",
-          "name": "newEaddress",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bool",
           "name": "value",
           "type": "bool"
@@ -242,68 +158,6 @@ export interface TrivialEncryption$Type {
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        },
-        {
-          "components": [
-            {
-              "internalType": "address",
-              "name": "sharer",
-              "type": "address"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "bytes32",
-                  "name": "sessionNonce",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "address",
-                  "name": "verifyingContract",
-                  "type": "address"
-                },
-                {
-                  "internalType": "bytes4",
-                  "name": "callFunction",
-                  "type": "bytes4"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "sharerArgData",
-                  "type": "bytes"
-                }
-              ],
-              "internalType": "struct AllowanceVoucher",
-              "name": "voucher",
-              "type": "tuple"
-            },
-            {
-              "internalType": "bytes",
-              "name": "voucherSignature",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes",
-              "name": "requesterArgData",
-              "type": "bytes"
-            }
-          ],
-          "internalType": "struct AllowanceProof",
-          "name": "proof",
-          "type": "tuple"
-        }
-      ],
-      "name": "claimHandle",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "inputs": [],
       "name": "cleanTransientStorage",
       "outputs": [],
@@ -324,13 +178,34 @@ export interface TrivialEncryption$Type {
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getNextEventId",
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "ciphertext",
+          "type": "bytes"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "contractAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "inputType",
+          "type": "uint8"
+        }
+      ],
+      "name": "getInputHandle",
       "outputs": [
         {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
         }
       ],
       "stateMutability": "view",
@@ -349,9 +224,116 @@ export interface TrivialEncryption$Type {
           "type": "uint8"
         },
         {
-          "internalType": "bytes",
-          "name": "packedInputs",
-          "type": "bytes"
+          "internalType": "bytes32",
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "inputA",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "inputB",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "inputC",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "counter",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "upperBound",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
         }
       ],
       "name": "getOpResultHandle",
@@ -384,19 +366,6 @@ export interface TrivialEncryption$Type {
           "internalType": "bytes32",
           "name": "generatedHandle",
           "type": "bytes32"
-        }
-      ],
-      "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "incoVerifier",
-      "outputs": [
-        {
-          "internalType": "contract IIncoVerifier",
-          "name": "",
-          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -432,25 +401,6 @@ export interface TrivialEncryption$Type {
           "internalType": "bytes32",
           "name": "handle",
           "type": "bytes32"
-        }
-      ],
-      "name": "isRevealed",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
         },
         {
           "internalType": "address",
@@ -467,19 +417,6 @@ export interface TrivialEncryption$Type {
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "handle",
-          "type": "bytes32"
-        }
-      ],
-      "name": "reveal",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     }
   ],

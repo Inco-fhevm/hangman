@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BSD-3-Clause-Clear
 pragma solidity ^0.8.24;
 
-import "@inco/lightning/src/Lib.devnet.sol";
+import "@inco/lightning/src/Lib.sol";
+import "@inco/lightning/src/IncoLightning.sol";
 
 contract HangmanFactory {
     event GameCreated(address indexed player, address gameContract);
-    error FeeNotPaid(uint256 requiredFee);
+
     address public master;
     euint256[] private fourBytes;
     uint256 public currentWord;
@@ -20,19 +21,13 @@ contract HangmanFactory {
         return fourBytes.length;
     }
 
-    function addWord(bytes memory inSecret) public payable onlyMaster {
-        if ((inco.getFee() * 1) > msg.value) {
-            revert FeeNotPaid((inco.getFee()) * 1);
-        }
+    function addWord(bytes memory inSecret) public onlyMaster {
         euint256 encryptedWord = e.newEuint256(inSecret, msg.sender);
         e.allow(encryptedWord, address(this));
         fourBytes.push(encryptedWord);
     }
 
-    function seedWords(bytes[] memory inSecret) public payable onlyMaster {
-        if ((inco.getFee() * inSecret.length) > msg.value) {
-            revert FeeNotPaid(inco.getFee() * inSecret.length);
-        }
+    function seedWords(bytes[] memory inSecret) public onlyMaster {
         for (uint256 i = 0; i < inSecret.length; i++) {
             euint256 encryptedWord = e.newEuint256(inSecret[i], msg.sender);
             e.allow(encryptedWord, address(this));
