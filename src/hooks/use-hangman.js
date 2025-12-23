@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { decryptValue, initializeSessionVoucher } from "@/utils/inco-lite";
+import { useDecryptValue, useInitializeSessionVoucher } from "@/utils/inco-lite";
 import {
   HANGMAN_ABI,
   HANGMAN_FACTORY_ABI,
@@ -36,6 +36,10 @@ export const useHangmanGame = () => {
   const walletClient = useWalletClient();
   const chainId = useChainId();
   const { address } = useAccount();
+
+  // Inco session hooks
+  const initializeSessionVoucher = useInitializeSessionVoucher();
+  const decryptValue = useDecryptValue();
 
   // Initialize refs array and check device size
   useEffect(() => {
