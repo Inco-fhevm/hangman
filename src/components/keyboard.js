@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const Keyboard = ({ onKeyPress }) => {
+const Keyboard = ({ onKeyPress, isLoading = false }) => {
   // Define the keyboard layout rows
   const rows = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -10,7 +10,7 @@ const Keyboard = ({ onKeyPress }) => {
 
   const [screenSize, setScreenSize] = useState({
     width: window.innerWidth,
-    height: window.innerHeight
+    height: window.innerHeight,
   });
 
   // Check device size
@@ -18,7 +18,7 @@ const Keyboard = ({ onKeyPress }) => {
     const handleResize = () => {
       setScreenSize({
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
       });
     };
 
@@ -69,23 +69,38 @@ const Keyboard = ({ onKeyPress }) => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-full">
-      <div className={`border-2 border-[#143E94] ${getPadding()} w-full flex flex-col items-center`}>
+      <div
+        className={`border-2 border-[#143E94] ${getPadding()} w-full flex flex-col items-center relative`}
+      >
+        {isLoading && (
+          <div className="absolute inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center rounded-sm z-10">
+            <div className="text-white text-lg font-bold animate-pulse">
+              Processing...
+            </div>
+          </div>
+        )}
         {rows.map((row, rowIndex) => (
           <div
             key={rowIndex}
-            className={`flex justify-center flex-wrap ${rowIndex !== 2 ? getRowMargin() : ""}`}
+            className={`flex justify-center flex-wrap ${
+              rowIndex !== 2 ? getRowMargin() : ""
+            }`}
           >
             {row.map((key) => (
               <div
                 key={key}
-                onClick={() => onKeyPress(key)}
+                onClick={() => !isLoading && onKeyPress(key)}
                 className={`
-                  border-2 border-[#143E94] text-[#3673F5] 
+                  border-2 border-[#143E94] text-[#3673F5]
                   ${getKeySize()}
-                  flex items-center justify-center 
-                  hover:bg-[#3673F5] hover:text-[#020B20] 
-                  transition duration-200 ease-in-out cursor-pointer
-                  rounded-sm
+                  flex items-center justify-center
+                  ${
+                    isLoading
+                      ? "opacity-50 cursor-not-allowed"
+                      : "hover:bg-[#3673F5] hover:text-[#020B20] cursor-pointer"
+                  }
+                  transition duration-200 ease-in-out
+                  rounded-sm relative z-0
                 `}
               >
                 {key}

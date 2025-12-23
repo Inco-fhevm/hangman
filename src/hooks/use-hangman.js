@@ -29,6 +29,9 @@ export const useHangmanGame = () => {
   const [startGameError, setStartGameError] = useState(null);
   const [guessLoading, setGuessLoading] = useState(false);
   const [guessError, setGuessError] = useState(null);
+  const [decryptLoading, setDecryptLoading] = useState(false);
+  const [decryptError, setDecryptError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const inputRefs = useRef([]);
   const { writeContractAsync } = useWriteContract();
@@ -129,7 +132,7 @@ export const useHangmanGame = () => {
   };
 
   const handleInputChange = async (index, value) => {
-    if (gameOver || guessLoading) return; // Prevent input if game is over or loading
+    if (gameOver || guessLoading || isLoading) return; // Prevent input if game is over or loading
 
     if (value.length <= 1) {
       // Create a copy of inputs to modify
@@ -166,14 +169,20 @@ export const useHangmanGame = () => {
 
           console.log("Tile: ", tile);
 
-          const decryptedTile = await decryptValue({
-            walletClient: walletClient.data,
-            handle: tile,
-            chainId,
-            publicClient,
-          });
+          // Start decryption loading
+          setDecryptLoading(true);
+          setDecryptError(null);
+          setIsLoading(true);
 
-          const tilePosition = parseInt(decryptedTile.toString());
+          try {
+            const decryptedTile = await decryptValue({
+              walletClient: walletClient.data,
+              handle: tile,
+              chainId,
+              publicClient,
+            });
+
+            const tilePosition = parseInt(decryptedTile.toString());
 
           // Check if decrypted tile is a valid position (1-4)
           if (tilePosition >= 1 && tilePosition <= 4) {
@@ -222,16 +231,28 @@ export const useHangmanGame = () => {
             console.log("Unexpected tile value:", tilePosition);
             setGuessError("Unexpected response from game. Please try again.");
           }
+          } finally {
+            setDecryptLoading(false);
+            setIsLoading(false);
+          }
         } catch (error) {
           console.error("Error in handleInputChange:", error);
-          setGuessError(
-            error.message || "Error processing your guess. Please try again."
-          );
+          if (decryptLoading) {
+            setDecryptError(
+              error.message || "Error decrypting game data. Please try again."
+            );
+          } else {
+            setGuessError(
+              error.message || "Error processing your guess. Please try again."
+            );
+          }
           // Reset input on error
           newInputs[index] = "";
           setInputs(newInputs);
         } finally {
           setGuessLoading(false);
+          setDecryptLoading(false);
+          setIsLoading(false);
         }
       }
     }
@@ -239,7 +260,7 @@ export const useHangmanGame = () => {
 
   // Handle paste functionality
   const handlePaste = (e) => {
-    if (gameOver || guessLoading) return; // Prevent paste if game is over or loading
+    if (gameOver || guessLoading || isLoading) return; // Prevent paste if game is over or loading
 
     e.preventDefault();
     const pastedText = e.clipboardData.getData("text").toUpperCase();
@@ -273,7 +294,7 @@ export const useHangmanGame = () => {
 
   // Handle keyboard navigation
   const handleKeyDown = (e, index) => {
-    if (gameOver || guessLoading) return; // Prevent keyboard navigation if game is over or loading
+    if (gameOver || guessLoading || isLoading) return; // Prevent keyboard navigation if game is over or loading
 
     if (e.key === "ArrowRight" && index < 7) {
       // Find the next non-wrong input to focus on
@@ -310,7 +331,7 @@ export const useHangmanGame = () => {
 
   // Handle virtual keyboard input
   const handleVirtualKeyPress = (key) => {
-    if (gameOver || guessLoading) return; // Prevent virtual keyboard input if game is over or loading
+    if (gameOver || guessLoading || isLoading) return; 
 
     if (activeIndex < 8 && !wrongInputs[activeIndex]) {
       handleInputChange(activeIndex, key);
@@ -375,6 +396,9 @@ export const useHangmanGame = () => {
     startGameError,
     guessLoading,
     guessError,
+    decryptLoading,
+    decryptError,
+    isLoading,
     handleStartGame,
     handleInputChange,
     handlePaste,
