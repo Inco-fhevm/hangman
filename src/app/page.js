@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 import Navbar from "@/components/navbar";
 import Keyboard from "@/components/keyboard";
 import Stage from "@/components/stages/stage";
@@ -31,6 +33,9 @@ const Page = () => {
     startGameError,
     guessLoading,
     guessError,
+    decryptLoading,
+    decryptError,
+    isLoading,
     handleStartGame,
     handleInputChange,
     handlePaste,
@@ -80,8 +85,13 @@ const Page = () => {
             ) : (
               <div className="mt-32 md:mt-0">
                 {guessError && <ErrorMessage message={guessError} />}
-                {/* {guessLoading && (
-                  <LoadingIndicator message="Processing your guess..." />
+                {decryptError && <ErrorMessage message={decryptError} />}
+                {/* {(guessLoading || decryptLoading) && (
+                  <div className="flex items-center justify-center py-4">
+                    <div className="text-[#3673F5] text-lg font-semibold animate-pulse">
+                      {guessLoading ? "Processing your guess..." : "Decrypting game data..."}
+                    </div>
+                  </div>
                 )} */}
 
                 <WordTiles tiles={tiles} correctTiles={correctTiles} />
@@ -95,12 +105,17 @@ const Page = () => {
                   handleKeyDown={handleKeyDown}
                   handlePaste={handlePaste}
                   handleFocus={handleFocus}
+                  isLoading={startGameLoading || guessLoading || isLoading}
                 />
 
                 <IncorrectGuessCounter incorrectCount={incorrectCount} />
 
                 <div className="mt-6 md:mt-8">
-                  <Keyboard onKeyPress={handleVirtualKeyPress} />
+                  <Keyboard
+                    key={`keyboard-${startGameLoading}-${guessLoading}-${isLoading}`}
+                    onKeyPress={handleVirtualKeyPress}
+                    isLoading={startGameLoading || guessLoading || isLoading}
+                  />
                 </div>
               </div>
             )}

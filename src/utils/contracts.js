@@ -174,8 +174,7 @@ export const HANGMAN_ABI = [
   },
 ];
 
-export const HANGMAN_FACTORY_CONTRACT_ADDRESS =
-  "0x9d0c9cde372c3b50e953e6dd620b503f2bddc6a2";
+// Note: HANGMAN_FACTORY_CONTRACT_ADDRESS is now provided by useContracts() hook
 export const HANGMAN_FACTORY_ABI = [
   {
     inputs: [

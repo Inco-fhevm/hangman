@@ -1,0 +1,606 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IEncryptedOperations",
+  "sourceName": "@inco/lightning/src/lightning-parts/interfaces/IEncryptedOperations.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eAdd",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eBitAnd",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eBitOr",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eBitXor",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "ct",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "toType",
+          "type": "uint8"
+        }
+      ],
+      "name": "eCast",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eDiv",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eEq",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eGe",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eGt",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "ebool",
+          "name": "condition",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "ifTrue",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "ifFalse",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eIfThenElse",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eLe",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eLt",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eMax",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eMin",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eMul",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eNe",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "ebool",
+          "name": "operand",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eNot",
+      "outputs": [
+        {
+          "internalType": "ebool",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum ETypes",
+          "name": "randType",
+          "type": "uint8"
+        }
+      ],
+      "name": "eRand",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "upperBound",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "randType",
+          "type": "uint8"
+        }
+      ],
+      "name": "eRandBounded",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eRem",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eRotl",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eRotr",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eShl",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eShr",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "euint256",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "euint256",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "eSub",
+      "outputs": [
+        {
+          "internalType": "euint256",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

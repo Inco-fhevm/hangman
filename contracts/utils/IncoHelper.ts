@@ -1,143 +1,140 @@
-// @ts-ignore
-import {
-  generateSecp256k1Keypair,
-  decodeSecp256k1PublicKey,
-  getEciesEncryptor,   // @ts-ignore
-} from "@inco/js/lite";
-import { hexToBytes } from "viem";
-import { HexString } from "@inco/js/dist/binary";
+import { AttestedComputeSupportedOps, Lightning } from '@inco/js/lite';
+import { handleTypes } from '@inco/js';
+import { publicClient } from './wallet';
+import type { WalletClient } from 'viem';
+import { bytesToHex, pad, toHex } from 'viem';
 
-// @ts-ignore
-import { incoLiteReencryptor } from "@inco/js/lite";
-// @ts-ignore
-import { getActiveLightningDeployment, IncoLiteDeployment } from "@inco/js/lite";
+let incoConfig: any = null;
 
-// Define KMS Endpoints for different networks
-export const KMS_CONNECT_ENDPOINT_BASE_SEPOLIA = "https://grpc.base-sepolia.lightning.testnet.inco.org/";
-export const KMS_CONNECT_ENDPOINT_MONAD_TESTNET = "grpc.monadtestnet.covalidator.denver.inco.org";
+/**
+ * Get or initialize the Inco configuration based on the current chain
+ */
+export async function getConfig() {
+  if (incoConfig) return incoConfig;
 
-// Helper function to get KMS endpoint based on network
-export const getKmsEndpoint = (network: string): string => {
-  switch (network.toLowerCase()) {
-    case 'basesepolia':
-      return KMS_CONNECT_ENDPOINT_BASE_SEPOLIA;
-    case 'monadtestnet':
-      return KMS_CONNECT_ENDPOINT_MONAD_TESTNET;
-    default:
-      throw new Error(`Unsupported network: ${network}`);
+  const chainId = publicClient.chain.id;
+  console.log(`🔧 Initializing Inco config for chain: ${chainId}`);
+
+  if (chainId === 84532) {
+    incoConfig = await Lightning.latest('devnet', 84532); // Base Sepolia
+  } 
+  else {
+    throw new Error(`Unsupported chain ID: ${chainId}`);
   }
-};
 
-// ✅ Define Config Type
-interface EncryptConfig {
-  chainId: number;
-  eciesPublicKey: HexString;
-  executorAddress: HexString;
+  return incoConfig;
+
 }
 
-// ✅ Define Encrypt Function Input Type
-interface EncryptParams {
-  value: string | number | bigint;
-  address: HexString;
-  config: EncryptConfig;
-  contractAddress: HexString;
-}
-
-// ✅ Define `InputCt` Type
-export interface InputCt {
-  prehandle: HexString;
-  handle: HexString;
-  context: {
-    hostChainId: bigint;
-    aclAddress: HexString;
-    userAddress: HexString;
-    contractAddress: HexString;
-  };
-  ciphertext: {
-    scheme: number;
-    type: number;
-    value: HexString;
-  };
-}
-
-// ✅ Update Encrypt Function to Return `InputCt`
-export const encryptValue = async ({
+/**
+ * Encrypt a value for a specific contract and account
+ */
+export async function encryptValue({
   value,
   address,
-  config,
   contractAddress,
-}: EncryptParams): Promise<{ inputCt: InputCt }> => {
-  const valueBigInt: bigint = BigInt(value); // Convert to BigInt
+}: {
+  value: bigint;
+  address: `0x${string}`;
+  contractAddress: `0x${string}`;
+}): Promise<`0x${string}`> {
+  const inco = await getConfig();
 
-  const plaintextWithContext = {
-    plaintext: {
-      scheme: 1, // encryptionSchemes.ecies
-      value: valueBigInt,
-      type: 8, // handleTypes.uint256
-    },
-    context: {
-      hostChainId: BigInt(config.chainId),
-      aclAddress: config.executorAddress,
-      userAddress: address,
-      contractAddress: contractAddress,
-    },
-  };
-
-  const ephemeralKeypair = await generateSecp256k1Keypair();
-  const eciesPubKey = decodeSecp256k1PublicKey(hexToBytes(config.eciesPublicKey));
-  const encryptor = getEciesEncryptor({
-    scheme: 1, 
-    pubKeyA: eciesPubKey,
-    privKeyB: ephemeralKeypair,
+  const encryptedData = await inco.encrypt(value, {
+    accountAddress: address,
+    dappAddress: contractAddress,
+    handleType: handleTypes.euint256,
   });
 
-  const inputCt: InputCt = await encryptor(plaintextWithContext);
+  // console.log("Encrypted data: ", encryptedData);
 
-  return { inputCt };
-};
-
-// ✅ Define Re-encrypt Function Input Type
-interface ReEncryptParams {
-  chainId: number;
-  walletClient: unknown; 
-  handle: string;
-  kmsConnectEndpoint: string;
+  return encryptedData as `0x${string}`;
 }
 
-// ✅ Define `ReencryptResult` Type
-export interface ReencryptResult {
-  value: bigint;
-}
-
-// ✅ Updated Re-encrypt Function with new API
-export const reencryptValue = async ({
-  chainId,
+/**
+ * Re-encrypt and decrypt a handle for a specific wallet
+ */
+export async function decryptValue({
   walletClient,
   handle,
-  kmsConnectEndpoint,
-}: ReEncryptParams): Promise<ReencryptResult> => {
-  if(!chainId || !walletClient || !handle || !kmsConnectEndpoint) {
-    throw new Error("Missing required parameters");
-  }
-  try {
+}: {
+  walletClient: WalletClient;
+  handle: string;
+}): Promise<bigint> {
+  const inco = await getConfig();
 
-    const reencryptor = await incoLiteReencryptor({
-      chainId: BigInt(chainId),
-      walletClient: walletClient,
-      kmsConnectRpcEndpointOrClient: kmsConnectEndpoint,
-    });
+  // Get attested decrypt for the wallet
+  const attestedDecrypt = await inco.attestedDecrypt(
+    walletClient,
+    [handle],
+  );
 
-    const decrypted = await reencryptor({ 
-      handle: handle 
-    });
+  // Return the decrypted value
+  return attestedDecrypt[0].plaintext.value;
+}
 
-    return { value: decrypted.value };
-  } catch (error: any) {
-    throw new Error(`Failed to re-encrypt value: ${error.message}`);
-  }
+export const attestedCompute = async ({
+  walletClient,
+  lhsHandle,
+  op,
+  rhsPlaintext,
+}: {
+  walletClient: WalletClient;
+  lhsHandle: `0x${string}`;
+  op: (typeof AttestedComputeSupportedOps)[keyof typeof AttestedComputeSupportedOps];
+  rhsPlaintext: any;
+}) => {
+  const incoConfig = await getConfig();
+
+  const result = await incoConfig.attestedCompute(
+    walletClient as WalletClient,
+    lhsHandle as `0x${string}`,
+    op,
+    rhsPlaintext
+  );
+
+  // Convert Uint8Array signatures to hex strings
+  const signatures = result.covalidatorSignatures.map((sig: Uint8Array) => bytesToHex(sig));
+
+  // Encode the plaintext value as bytes32
+  // For boolean: true = 1, false = 0, padded to 32 bytes
+  const encodedValue = pad(toHex(result.plaintext.value ? 1 : 0), { size: 32 });
+
+  // Return in format expected by contract:
+  // - plaintext: the actual decrypted value  
+  // - attestation: { handle, value } for the DecryptionAttestation struct
+  // - signature array for verification
+  return {
+    plaintext: result.plaintext.value,
+    attestation: {
+      handle: result.handle,
+      value: encodedValue,
+    },
+    signature: signatures,
+  };
 };
 
-// ✅ Define `incoLiteConfig` Function with Proper Type Return
-export const incoLiteConfig = (network_name: string): IncoLiteDeployment => {
-  return getActiveLightningDeployment(network_name);
-};
+/**
+ * Get the fee required for Inco operations
+ */
+export async function getFee(): Promise<bigint> {
+  const inco = await getConfig();
+  
+  // Read the fee from the Lightning contract
+  const fee = await publicClient.readContract({
+    address: inco.executorAddress,
+    abi: [
+      {
+        type: 'function',
+        inputs: [],
+        name: 'getFee',
+        outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+        stateMutability: 'pure',
+      },
+    ],
+    functionName: 'getFee',
+  });
+
+  console.log("Fee: ", fee);
+  return fee;
+}

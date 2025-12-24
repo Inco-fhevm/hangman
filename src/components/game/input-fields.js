@@ -7,6 +7,7 @@ export const InputFields = ({
   handleKeyDown,
   handlePaste,
   handleFocus,
+  isLoading = false,
 }) => (
   <div className="flex space-x-2 md:space-x-4 w-full px-2 md:px-8">
     {[...Array(8)].map((_, index) => (
@@ -31,7 +32,7 @@ export const InputFields = ({
                   }`}
         maxLength={1}
         autoComplete="off"
-        readOnly={wrongInputs[index]}
+        readOnly={wrongInputs[index] || isLoading}
       />
     ))}
   </div>

@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { reEncryptValue } from "@/utils/inco-lite";
 import {
-  HANGMAN_ABI,
-  HANGMAN_FACTORY_ABI,
-  HANGMAN_FACTORY_CONTRACT_ADDRESS,
-} from "@/utils/contracts";
+  useDecryptValue,
+  useInitializeSessionVoucher,
+} from "@/utils/inco-lite";
+import { HANGMAN_ABI, HANGMAN_FACTORY_ABI } from "@/utils/contracts";
+import { useContracts } from "@/contexts/contract-context";
 import {
   useAccount,
   useChainId,
@@ -16,6 +16,7 @@ import { useBurnerWallet } from "@/context/burner-wallet-context";
 import { parseEther } from "viem";
 
 export const useHangmanGame = () => {
+  const { contracts } = useContracts();
   const [gameStarted, setGameStarted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [hasWon, setHasWon] = useState(false);
@@ -31,6 +32,9 @@ export const useHangmanGame = () => {
   const [startGameError, setStartGameError] = useState(null);
   const [guessLoading, setGuessLoading] = useState(false);
   const [guessError, setGuessError] = useState(null);
+  const [decryptLoading, setDecryptLoading] = useState(false);
+  const [decryptError, setDecryptError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const inputRefs = useRef([]);
   const { writeContractAsync } = useWriteContract();
@@ -44,6 +48,10 @@ export const useHangmanGame = () => {
     hasWallet: hasBurnerWallet,
     isCreating: isCreatingBurner,
   } = useBurnerWallet();
+
+  // Inco session hooks
+  const initializeSessionVoucher = useInitializeSessionVoucher();
+  const decryptValue = useDecryptValue();
 
   // Initialize refs array and check device size
   useEffect(() => {
@@ -91,58 +99,17 @@ export const useHangmanGame = () => {
     setStartGameError(null);
 
     try {
-      let activeBurnerWallet = burnerWallet;
-
-      // Step 1: Create burner wallet if it doesn't exist
-      if (!hasBurnerWallet) {
-        console.log("Creating burner wallet...");
-        try {
-          activeBurnerWallet = await createBurnerWallet();
-          console.log("✅ Burner wallet created successfully");
-          // Continue with the rest of the function after wallet creation
-        } catch (error) {
-          console.error("Failed to create burner wallet:", error);
-          setStartGameError(
-            "Failed to create burner wallet. Please try again."
-          );
-          return;
-        }
-      }
-
-      // Step 2: Check burner wallet balance and fund if needed
-      const burnerBalance = await publicClient.getBalance({
-        address: activeBurnerWallet.account.address,
-      });
-
-      const requiredAmount = parseEther("0.01");
-      console.log(
-        `Burner balance: ${burnerBalance}, Required: ${requiredAmount}`
+      // Initialize session voucher for attested decrypt
+      console.log("🎮 Initializing session voucher for game...");
+      await initializeSessionVoucher(
+        walletClient.data,
+        chainId,
+        publicClient,
+        contracts.incoEnv
       );
 
-      if (burnerBalance < requiredAmount) {
-        console.log("Funding burner wallet with 0.01 ETH...");
-
-        // Fund burner wallet from main wallet using sendTransaction
-        if (!walletClient.data) {
-          throw new Error("Main wallet not connected");
-        }
-
-        const fundingHash = await walletClient.data.sendTransaction({
-          to: activeBurnerWallet.account.address,
-          value: requiredAmount,
-        });
-
-        await publicClient.waitForTransactionReceipt({
-          hash: fundingHash,
-        });
-
-        console.log("✅ Burner wallet funded successfully");
-      }
-
-      // Step 3: Create game using burner wallet
-      console.log("Creating game with burner wallet...");
-      const hash = await activeBurnerWallet.writeContract({
-        address: HANGMAN_FACTORY_CONTRACT_ADDRESS,
+      const hash = await writeContractAsync({
+        address: contracts.hangmanFactoryContract.address,
         abi: HANGMAN_FACTORY_ABI,
         functionName: "CreateGame",
         args: [activeBurnerWallet.account.address],
@@ -157,7 +124,7 @@ export const useHangmanGame = () => {
       }
 
       const gameContractAddress = await publicClient.readContract({
-        address: HANGMAN_FACTORY_CONTRACT_ADDRESS,
+        address: contracts.hangmanFactoryContract.address,
         abi: HANGMAN_FACTORY_ABI,
         functionName: "getGameAddressByPlayer",
         args: [activeBurnerWallet.account.address],
@@ -191,7 +158,7 @@ export const useHangmanGame = () => {
   };
 
   const handleInputChange = async (index, value) => {
-    if (gameOver || guessLoading) return; // Prevent input if game is over or loading
+    if (gameOver || guessLoading || isLoading) return; // Prevent input if game is over or loading
 
     if (value.length <= 1) {
       // Create a copy of inputs to modify
@@ -223,6 +190,7 @@ export const useHangmanGame = () => {
 
           const receipt = await publicClient.waitForTransactionReceipt({
             hash,
+            confirmations: 5,
           });
 
           const tile = await publicClient.readContract({
@@ -232,71 +200,93 @@ export const useHangmanGame = () => {
             args: [],
           });
 
-          const decryptedTile = await reEncryptValue({
-            chainId,
-            walletClient: { data: burnerWallet },
-            handle: tile,
-          });
+          console.log("Tile: ", tile);
 
-          const tilePosition = parseInt(decryptedTile.toString());
+          // Start decryption loading
+          setDecryptLoading(true);
+          setDecryptError(null);
+          setIsLoading(true);
 
-          // Check if decrypted tile is a valid position (1-4)
-          if (tilePosition >= 1 && tilePosition <= 4) {
-            // This means the guessed letter is correct and should be placed at position tilePosition
-            // Clear the input field where user typed
-            newInputs[index] = "";
+          try {
+            const decryptedTile = await decryptValue({
+              walletClient: walletClient.data,
+              handle: tile,
+              chainId,
+              publicClient,
+              incoEnv: contracts.incoEnv,
+            });
 
-            // Get array index (0-based) from tile position (1-based)
-            const tileIndex = tilePosition - 1;
+            const tilePosition = parseInt(decryptedTile.toString());
 
-            // Update the tile with the correct letter
-            const newTiles = [...tiles];
-            newTiles[tileIndex] = value.toUpperCase();
-            setTiles(newTiles);
+            // Check if decrypted tile is a valid position (1-4)
+            if (tilePosition >= 1 && tilePosition <= 4) {
+              // This means the guessed letter is correct and should be placed at position tilePosition
+              // Clear the input field where user typed
+              newInputs[index] = "";
 
-            // Mark this tile as correct
-            const newCorrectTiles = [...correctTiles];
-            newCorrectTiles[tileIndex] = true;
-            setCorrectTiles(newCorrectTiles);
+              // Get array index (0-based) from tile position (1-based)
+              const tileIndex = tilePosition - 1;
 
-            // Clear the current input and update inputs state
-            setInputs(newInputs);
+              // Update the tile with the correct letter
+              const newTiles = [...tiles];
+              newTiles[tileIndex] = value.toUpperCase();
+              setTiles(newTiles);
 
-            // Focus on the next empty input
-            const nextEmptyIndex = newInputs.findIndex((val) => !val);
-            if (nextEmptyIndex !== -1) {
-              setActiveIndex(nextEmptyIndex);
-              inputRefs.current[nextEmptyIndex].focus();
+              // Mark this tile as correct
+              const newCorrectTiles = [...correctTiles];
+              newCorrectTiles[tileIndex] = true;
+              setCorrectTiles(newCorrectTiles);
+
+              // Clear the current input and update inputs state
+              setInputs(newInputs);
+
+              // Focus on the next empty input
+              const nextEmptyIndex = newInputs.findIndex((val) => !val);
+              if (nextEmptyIndex !== -1) {
+                setActiveIndex(nextEmptyIndex);
+                inputRefs.current[nextEmptyIndex].focus();
+              }
+            } else if (tilePosition === 100) {
+              // Wrong input
+              // Increment incorrect count
+              setIncorrectCount((prevCount) => prevCount + 1);
+
+              // Keep the wrong input in the field and mark it as wrong
+              const newWrongInputs = [...wrongInputs];
+              newWrongInputs[index] = true;
+              setWrongInputs(newWrongInputs);
+
+              // Focus on the next input field
+              if (index < 7) {
+                setActiveIndex(index + 1);
+                inputRefs.current[index + 1].focus();
+              }
+            } else {
+              console.log("Unexpected tile value:", tilePosition);
+              setGuessError("Unexpected response from game. Please try again.");
             }
-          } else if (tilePosition === 100) {
-            // Wrong input
-            // Increment incorrect count
-            setIncorrectCount((prevCount) => prevCount + 1);
-
-            // Keep the wrong input in the field and mark it as wrong
-            const newWrongInputs = [...wrongInputs];
-            newWrongInputs[index] = true;
-            setWrongInputs(newWrongInputs);
-
-            // Focus on the next input field
-            if (index < 7) {
-              setActiveIndex(index + 1);
-              inputRefs.current[index + 1].focus();
-            }
-          } else {
-            console.log("Unexpected tile value:", tilePosition);
-            setGuessError("Unexpected response from game. Please try again.");
+          } finally {
+            setDecryptLoading(false);
+            setIsLoading(false);
           }
         } catch (error) {
           console.error("Error in handleInputChange:", error);
-          setGuessError(
-            error.message || "Error processing your guess. Please try again."
-          );
+          if (decryptLoading) {
+            setDecryptError(
+              error.message || "Error decrypting game data. Please try again."
+            );
+          } else {
+            setGuessError(
+              error.message || "Error processing your guess. Please try again."
+            );
+          }
           // Reset input on error
           newInputs[index] = "";
           setInputs(newInputs);
         } finally {
           setGuessLoading(false);
+          setDecryptLoading(false);
+          setIsLoading(false);
         }
       }
     }
@@ -304,7 +294,7 @@ export const useHangmanGame = () => {
 
   // Handle paste functionality
   const handlePaste = (e) => {
-    if (gameOver || guessLoading) return; // Prevent paste if game is over or loading
+    if (gameOver || guessLoading || isLoading) return; // Prevent paste if game is over or loading
 
     e.preventDefault();
     const pastedText = e.clipboardData.getData("text").toUpperCase();
@@ -338,7 +328,7 @@ export const useHangmanGame = () => {
 
   // Handle keyboard navigation
   const handleKeyDown = (e, index) => {
-    if (gameOver || guessLoading) return; // Prevent keyboard navigation if game is over or loading
+    if (gameOver || guessLoading || isLoading) return; // Prevent keyboard navigation if game is over or loading
 
     if (e.key === "ArrowRight" && index < 7) {
       // Find the next non-wrong input to focus on
@@ -375,7 +365,7 @@ export const useHangmanGame = () => {
 
   // Handle virtual keyboard input
   const handleVirtualKeyPress = (key) => {
-    if (gameOver || guessLoading) return; // Prevent virtual keyboard input if game is over or loading
+    if (gameOver || guessLoading || isLoading) return;
 
     if (activeIndex < 8 && !wrongInputs[activeIndex]) {
       handleInputChange(activeIndex, key);
@@ -440,6 +430,9 @@ export const useHangmanGame = () => {
     startGameError,
     guessLoading,
     guessError,
+    decryptLoading,
+    decryptError,
+    isLoading,
     handleStartGame,
     handleInputChange,
     handlePaste,

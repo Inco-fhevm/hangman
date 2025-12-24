@@ -1,172 +1,239 @@
+"use client";
+
+import React, { createContext, useContext, useState, useCallback } from "react";
 import {
+  Lightning,
   generateSecp256k1Keypair,
-  decodeSecp256k1PublicKey,
-  getEciesEncryptor,
-  incoLiteReencryptor,
+  getIncoVerifierContract,
 } from "@inco/js/lite";
-import { hexToBytes } from "viem";
-import { getAddress, formatUnits } from "viem";
-import { getActiveLightningDeployment } from "@inco/js/lite";
+import { handleTypes } from "@inco/js";
+import { privateKeyToAccount } from "viem/accounts";
 
-/**
- * @dev Network configuration constants for Inco FHE operations
- * Base Sepolia testnet identifier for the network
- *
- * NOTE: Currently only operating on Base Sepolia network
- * If supporting additional networks in the future, this would need to be parameterized
- */
-export const NETWORK_ID = "baseSepolia";
+let incoConfig = null;
 
-/**
- * @dev KMS service endpoint for reencryption operations
- * This endpoint is used to communicate with the Inco's Key Management Service
- * for secure key handling and reencryption operations
- *
- * NOTE: This endpoint is specific to Base Sepolia network
- * Currently only operating on Base Sepolia
- */
-export const KMS_SERVICE_ENDPOINT =
-  "https://grpc.base-sepolia.lightning.testnet.inco.org";
+// Create context for session voucher wrapper
+const SessionVoucherContext = createContext();
 
-/**
- * @dev Encryption scheme constants
- *
- * ENCRYPTION_SCHEME_ECIES = 1: Represents the ECIES (Elliptic Curve Integrated Encryption Scheme)
- * This value comes from the encryptionSchemes enum where:
- * - tfhe: 0
- * - ecies: 1 (used here)
- * - cryptobox: 2
- *
- * DATA_TYPE_UINT256 = 8: Specifies the data type as UINT256 (euint256) for FHE operations
- * This value comes from the handleTypes enum where euint256 = 8
- * The complete handleTypes enum includes:
- * - ebool: 0
- * - euint4: 1
- * - euint8: 2
- * - euint16: 3
- * - euint32: 4
- * - euint64: 5
- * - euint128: 6
- * - euint160: 7
- * - euint256: 8 (used here)
- * - ebytes64: 9
- * - ebytes128: 10
- * - ebytes256: 11
- */
-const ENCRYPTION_SCHEME_ECIES = 1;
-const DATA_TYPE_UINT256 = 8;
+// Provider component for session voucher management
+export function SessionVoucherProvider({ children }) {
+  const [sessionVoucherWrapper, setSessionVoucherWrapper] = useState(null);
 
-export const getConfig = (chainId) => {
-  return getActiveLightningDeployment(chainId);
-};
+  // Function to check if we have a valid session
+  const hasValidSession = useCallback(() => {
+    if (!sessionVoucherWrapper) return false;
 
-/**
- *
- * @example
- * const encryptedValue = await encryptValue({
- *   value: 100,
- *   address: "0x123...",
- *   config: { chainId: 84532, deployedAtAddress: "0xabc...", eciesPublicKey: "0xdef..." },
- *   contractAddress: "0x456..."
- * });
- */
-export const encryptValue = async ({
-  value,
-  address,
-  config,
-  contractAddress,
-}) => {
-  // Convert the input value to BigInt for proper encryption
-  const valueBigInt = BigInt(value);
+    const { voucher, keypair, expiration } = sessionVoucherWrapper;
+    return voucher && keypair && expiration > new Date();
+  }, [sessionVoucherWrapper]);
 
-  // Format the contract address to checksum format for standardization
-  const checksummedAddress = getAddress(contractAddress);
-  console.log("config", config);
+  // Function to clear current session
+  const clearSession = useCallback(() => {
+    setSessionVoucherWrapper(null);
+    console.log("Session cleared");
+  }, []);
 
-  // Create a plaintext object with context information for encryption
-  // This context includes chain ID, ACL address, user address, and contract address
-  // which are all necessary for proper FHE operations and access control
-  const plaintextWithContext = {
-    plaintext: {
-      scheme: ENCRYPTION_SCHEME_ECIES,
-      value: valueBigInt,
-      type: DATA_TYPE_UINT256,
-    },
-    context: {
-      hostChainId: BigInt(config.chainId),
-      aclAddress: config.executorAddress,
-      userAddress: address,
-      contractAddress: checksummedAddress,
-    },
+  const value = {
+    sessionVoucherWrapper,
+    setSessionVoucherWrapper,
+    hasValidSession,
+    clearSession,
   };
 
-  // Generate an ephemeral keypair for this encryption session
-  // Using an ephemeral keypair enhances security by ensuring forward secrecy
-  const ephemeralKeypair = await generateSecp256k1Keypair();
-
-  // Decode the ECIES public key from hex format to the required format for encryption
-  const eciesPubKey = decodeSecp256k1PublicKey(
-    hexToBytes(config.eciesPublicKey)
+  return (
+    <SessionVoucherContext.Provider value={value}>
+      {children}
+    </SessionVoucherContext.Provider>
   );
+}
 
-  // Get an ECIES encryptor using the public key and the generated ephemeral keypair
-  const encryptor = getEciesEncryptor({
-    scheme: ENCRYPTION_SCHEME_ECIES,
-    pubKeyA: eciesPubKey,
-    privKeyB: ephemeralKeypair,
-  });
+// Hook to use session voucher context
+export function useSessionVoucher() {
+  const context = useContext(SessionVoucherContext);
+  if (!context) {
+    throw new Error(
+      "useSessionVoucher must be used within a SessionVoucherProvider"
+    );
+  }
+  return context;
+}
 
-  // Encrypt the data with the context information
-  const encryptedData = await encryptor(plaintextWithContext);
-
-  // Return the encrypted data as inputCt (ciphertext)
-  return { inputCt: encryptedData };
-};
+// Hook to clear session
+export function useClearSession() {
+  const { clearSession } = useSessionVoucher();
+  return clearSession;
+}
 
 /**
- *
- * This function takes an encrypted value handle and performs reencryption
- * through the KMS service, then decrypts it to obtain the original value.
- *
- * @param {Object} params - The reencryption parameters
- * @param {bigint} params.chainId - The ID of the chain
- * @param {Object} params.walletClient - The wallet client for authentication
- * @param {Object} params.handle - The handle of the encrypted value to decrypt
- *
- * @returns {Promise<string>} The decrypted value formatted as a string
- *
- * @throws {Error} If any required parameters are missing or if reencryption fails
- *
- * @example
- * const decryptedValue = await reEncryptValue({
- *   chainId: 84532,
- *   walletClient: yourWalletClient,
- *   handle: encryptionHandle
- * });
+ * Get or initialize the Inco configuration based on the current chain and environment
  */
-export const reEncryptValue = async ({ chainId, walletClient, handle }) => {
-  // Validate that all required parameters are provided
-  if (!chainId || !walletClient || !handle) {
-    throw new Error("Missing required parameters for creating reencryptor");
+export async function getConfig(chainId, incoEnv) {
+  if (incoConfig) return incoConfig;
+
+  console.log(
+    `🔧 Initializing Inco config for chain: ${chainId}, env: ${incoEnv}`
+  );
+
+  if (chainId === 84532) {
+    incoConfig = await Lightning.latest(incoEnv, 84532); // Base Sepolia
+  } else {
+    throw new Error(`Unsupported chain ID: ${chainId}`);
   }
+  return incoConfig;
+}
 
-  try {
-    // Create a reencryptor using the KMS service
-    const reencryptor = await incoLiteReencryptor({
-      chainId: chainId,
-      walletClient: walletClient.data,
-      kmsConnectRpcEndpointOrClient: KMS_SERVICE_ENDPOINT,
-    });
+/**
+ * Initialize session voucher for attested decrypt with session key
+ */
+export function useInitializeSessionVoucher() {
+  const { sessionVoucherWrapper, setSessionVoucherWrapper, hasValidSession } =
+    useSessionVoucher();
 
-    // This sends the encrypted handle to the KMS service which reencrypts it
-    const decryptedResult = await reencryptor({
-      handle,
-    });
+  return useCallback(
+    async (walletClient, chainId, publicClient, incoEnv) => {
+      // Check if we already have a valid session in memory
+      if (hasValidSession()) {
+        console.log("Using existing session voucher from memory");
+        const { voucher, keypair } = sessionVoucherWrapper;
+        return { voucher, keypair };
+      }
 
-    console.log("Decrypted result:", decryptedResult);
+      console.log("Creating new session voucher");
+      const inco = await getConfig(chainId, incoEnv);
 
-    return decryptedResult.value;
-  } catch (error) {
-    throw new Error(`Failed to create reencryptor: ${error.message}`);
-  }
-};
+      // Generate ephemeral keypair for session
+      const ephemeralKeypair = await generateSecp256k1Keypair();
+      const privateKey = `0x${ephemeralKeypair.kp.getPrivate("hex")}`;
+      console.log("Private key:", privateKey);
+
+      const ephemeralAccount = privateKeyToAccount(privateKey);
+
+      console.log("Ephemeral account:", ephemeralAccount);
+      console.log("Ephemeral account address:", ephemeralAccount.address);
+
+      // const executorAddress = inco.executorAddress;
+      // console.log("Inco executor address:", executorAddress);
+
+      // const incoVerifier = await Lightning.getIncoVerifierContract(
+      //   publicClient,
+      //   executorAddress
+      // );
+      // const incoVerifierAddress = incoVerifier.address;
+      const sessionVerifierAddress =
+        "0xc34569efc25901bdd6b652164a2c8a7228b23005";
+      console.log("Inco verifier address:", sessionVerifierAddress);
+
+      // Create voucher valid for 24 hours
+      const expirationDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
+
+      console.log("🔑 Creating session voucher for attested decrypt...");
+      console.log("Ephemeral account address:", ephemeralAccount.address);
+      console.log("Inco verifier address:", sessionVerifierAddress);
+
+      const sessionVoucher = await inco.grantSessionKeyAllowanceVoucher(
+        walletClient,
+        ephemeralAccount.address,
+        expirationDate,
+        sessionVerifierAddress
+      );
+
+      console.log("✅ Session voucher created:", sessionVoucher);
+
+      // Store session data in context
+      const newSessionWrapper = {
+        voucher: sessionVoucher,
+        keypair: ephemeralKeypair,
+        expiration: expirationDate,
+      };
+      setSessionVoucherWrapper(newSessionWrapper);
+
+      return { voucher: sessionVoucher, keypair: ephemeralKeypair };
+    },
+    [sessionVoucherWrapper, setSessionVoucherWrapper, hasValidSession]
+  );
+}
+
+/**
+ * Encrypt a value for a specific contract and account
+ */
+export async function encryptValue({
+  value,
+  address,
+  contractAddress,
+  chainId,
+  incoEnv,
+}) {
+  const inco = await getConfig(chainId, incoEnv);
+
+  const encryptedData = await inco.encrypt(BigInt(value), {
+    accountAddress: address,
+    dappAddress: contractAddress,
+    handleType: handleTypes.euint256,
+  });
+
+  console.log("Encrypted data: ", encryptedData);
+
+  return encryptedData;
+}
+
+/**
+ * Hook to decrypt a value using session voucher
+ */
+export function useDecryptValue() {
+  const { sessionVoucherWrapper, hasValidSession } = useSessionVoucher();
+  const initializeSessionVoucher = useInitializeSessionVoucher();
+
+  return useCallback(
+    async ({ walletClient, handle, chainId, publicClient, incoEnv }) => {
+      const inco = await getConfig(chainId, incoEnv);
+
+      // Ensure we have a session voucher initialized
+      if (!hasValidSession()) {
+        await initializeSessionVoucher(walletClient, chainId, publicClient);
+      }
+
+      const { voucher, keypair } = sessionVoucherWrapper;
+
+      // Use attested decrypt with voucher
+      console.log("Decrypting handle:", handle, "type:", typeof handle);
+
+      console.log("using session voucher: ", voucher);
+      const decrypted = await inco.attestedDecryptWithVoucher(
+        keypair,
+        voucher,
+        publicClient,
+        [handle]
+      );
+
+      // const decrypted = await inco.attestedDecrypt(walletClient, [handle]);
+
+      // Return the decrypted value
+      return decrypted[0].plaintext.value;
+    },
+    [sessionVoucherWrapper, hasValidSession, initializeSessionVoucher]
+  );
+}
+
+/**
+ * Get the fee required for Inco operations
+ */
+export async function getFee(chainId, incoEnv) {
+  const inco = await getConfig(chainId, incoEnv);
+
+  // Read the fee from the Lightning contract
+  const fee = await inco.publicClient.readContract({
+    address: inco.executorAddress,
+    abi: [
+      {
+        type: "function",
+        inputs: [],
+        name: "getFee",
+        outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
+        stateMutability: "pure",
+      },
+    ],
+    functionName: "getFee",
+  });
+
+  console.log("Fee: ", fee);
+  return fee;
+}
