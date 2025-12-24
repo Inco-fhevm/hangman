@@ -1,0 +1,16 @@
+services:
+  nextjs-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - HANGMAN_FACTORY_CONTRACT_ADDRESS=${HANGMAN_FACTORY_CONTRACT_ADDRESS}
+      - INCO_ENV=${INCO_ENV}
+      - REOWN_APP_ID=${REOWN_APP_ID}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
