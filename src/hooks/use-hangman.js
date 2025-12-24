@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useDecryptValue, useInitializeSessionVoucher } from "@/utils/inco-lite";
 import {
-  HANGMAN_ABI,
-  HANGMAN_FACTORY_ABI,
-  HANGMAN_FACTORY_CONTRACT_ADDRESS,
-} from "@/utils/contracts";
+  useDecryptValue,
+  useInitializeSessionVoucher,
+} from "@/utils/inco-lite";
+import { HANGMAN_ABI, HANGMAN_FACTORY_ABI } from "@/utils/contracts";
+import { useContracts } from "@/contexts/contract-context";
 import {
   useAccount,
   useChainId,
@@ -14,6 +14,7 @@ import {
 } from "wagmi";
 
 export const useHangmanGame = () => {
+  const { contracts } = useContracts();
   const [gameStarted, setGameStarted] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [hasWon, setHasWon] = useState(false);
@@ -82,10 +83,15 @@ export const useHangmanGame = () => {
     try {
       // Initialize session voucher for attested decrypt
       console.log("🎮 Initializing session voucher for game...");
-      await initializeSessionVoucher(walletClient.data, chainId, publicClient);
+      await initializeSessionVoucher(
+        walletClient.data,
+        chainId,
+        publicClient,
+        contracts.incoEnv
+      );
 
       const hash = await writeContractAsync({
-        address: HANGMAN_FACTORY_CONTRACT_ADDRESS,
+        address: contracts.hangmanFactoryContract.address,
         abi: HANGMAN_FACTORY_ABI,
         functionName: "CreateGame",
         args: [address],
@@ -100,7 +106,7 @@ export const useHangmanGame = () => {
       }
 
       const gameContractAddress = await publicClient.readContract({
-        address: HANGMAN_FACTORY_CONTRACT_ADDRESS,
+        address: contracts.hangmanFactoryContract.address,
         abi: HANGMAN_FACTORY_ABI,
         functionName: "getGameAddressByPlayer",
         args: [address],
@@ -180,57 +186,58 @@ export const useHangmanGame = () => {
               handle: tile,
               chainId,
               publicClient,
+              incoEnv: contracts.incoEnv,
             });
 
             const tilePosition = parseInt(decryptedTile.toString());
 
-          // Check if decrypted tile is a valid position (1-4)
-          if (tilePosition >= 1 && tilePosition <= 4) {
-            // This means the guessed letter is correct and should be placed at position tilePosition
-            // Clear the input field where user typed
-            newInputs[index] = "";
+            // Check if decrypted tile is a valid position (1-4)
+            if (tilePosition >= 1 && tilePosition <= 4) {
+              // This means the guessed letter is correct and should be placed at position tilePosition
+              // Clear the input field where user typed
+              newInputs[index] = "";
 
-            // Get array index (0-based) from tile position (1-based)
-            const tileIndex = tilePosition - 1;
+              // Get array index (0-based) from tile position (1-based)
+              const tileIndex = tilePosition - 1;
 
-            // Update the tile with the correct letter
-            const newTiles = [...tiles];
-            newTiles[tileIndex] = value.toUpperCase();
-            setTiles(newTiles);
+              // Update the tile with the correct letter
+              const newTiles = [...tiles];
+              newTiles[tileIndex] = value.toUpperCase();
+              setTiles(newTiles);
 
-            // Mark this tile as correct
-            const newCorrectTiles = [...correctTiles];
-            newCorrectTiles[tileIndex] = true;
-            setCorrectTiles(newCorrectTiles);
+              // Mark this tile as correct
+              const newCorrectTiles = [...correctTiles];
+              newCorrectTiles[tileIndex] = true;
+              setCorrectTiles(newCorrectTiles);
 
-            // Clear the current input and update inputs state
-            setInputs(newInputs);
+              // Clear the current input and update inputs state
+              setInputs(newInputs);
 
-            // Focus on the next empty input
-            const nextEmptyIndex = newInputs.findIndex((val) => !val);
-            if (nextEmptyIndex !== -1) {
-              setActiveIndex(nextEmptyIndex);
-              inputRefs.current[nextEmptyIndex].focus();
+              // Focus on the next empty input
+              const nextEmptyIndex = newInputs.findIndex((val) => !val);
+              if (nextEmptyIndex !== -1) {
+                setActiveIndex(nextEmptyIndex);
+                inputRefs.current[nextEmptyIndex].focus();
+              }
+            } else if (tilePosition === 100) {
+              // Wrong input
+              // Increment incorrect count
+              setIncorrectCount((prevCount) => prevCount + 1);
+
+              // Keep the wrong input in the field and mark it as wrong
+              const newWrongInputs = [...wrongInputs];
+              newWrongInputs[index] = true;
+              setWrongInputs(newWrongInputs);
+
+              // Focus on the next input field
+              if (index < 7) {
+                setActiveIndex(index + 1);
+                inputRefs.current[index + 1].focus();
+              }
+            } else {
+              console.log("Unexpected tile value:", tilePosition);
+              setGuessError("Unexpected response from game. Please try again.");
             }
-          } else if (tilePosition === 100) {
-            // Wrong input
-            // Increment incorrect count
-            setIncorrectCount((prevCount) => prevCount + 1);
-
-            // Keep the wrong input in the field and mark it as wrong
-            const newWrongInputs = [...wrongInputs];
-            newWrongInputs[index] = true;
-            setWrongInputs(newWrongInputs);
-
-            // Focus on the next input field
-            if (index < 7) {
-              setActiveIndex(index + 1);
-              inputRefs.current[index + 1].focus();
-            }
-          } else {
-            console.log("Unexpected tile value:", tilePosition);
-            setGuessError("Unexpected response from game. Please try again.");
-          }
           } finally {
             setDecryptLoading(false);
             setIsLoading(false);
@@ -331,7 +338,7 @@ export const useHangmanGame = () => {
 
   // Handle virtual keyboard input
   const handleVirtualKeyPress = (key) => {
-    if (gameOver || guessLoading || isLoading) return; 
+    if (gameOver || guessLoading || isLoading) return;
 
     if (activeIndex < 8 && !wrongInputs[activeIndex]) {
       handleInputChange(activeIndex, key);

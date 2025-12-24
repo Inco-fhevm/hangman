@@ -6,6 +6,7 @@ import { RainbowKitWrapper } from "@/rainbow-wallet/rainbow-provider";
 import { AuthProvider } from "@/auth/auth-context";
 import AuthWrapper from "@/auth/auth-wrapper";
 import { SessionVoucherProvider } from "@/utils/inco-lite";
+import { ContractProvider } from "@/contexts/contract-context";
 
 const departureMono = localFont({
   src: "./fonts/DepartureMono-Regular.woff",
@@ -26,22 +27,24 @@ export default function RootLayout({ children }) {
         style={{ fontFamily: "var(--font-departure-mono)" }}
       >
         {" "}
-        <RainbowKitWrapper>
-          <AuthProvider>
-            <SessionVoucherProvider>
-              <AuthWrapper>
-                <ThemeProvider
-                  attribute="class"
-                  defaultTheme="dark"
-                  enableSystem
-                  disableTransitionOnChange
-                >
-                  {children}
-                </ThemeProvider>
-              </AuthWrapper>
-            </SessionVoucherProvider>
-          </AuthProvider>
-        </RainbowKitWrapper>
+        <ContractProvider>
+          <RainbowKitWrapper>
+            <AuthProvider>
+              <SessionVoucherProvider>
+                <AuthWrapper>
+                  <ThemeProvider
+                    attribute="class"
+                    defaultTheme="dark"
+                    enableSystem
+                    disableTransitionOnChange
+                  >
+                    {children}
+                  </ThemeProvider>
+                </AuthWrapper>
+              </SessionVoucherProvider>
+            </AuthProvider>
+          </RainbowKitWrapper>
+        </ContractProvider>
       </body>
     </html>
   );

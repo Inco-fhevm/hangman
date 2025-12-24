@@ -1,182 +1,181 @@
 export const HANGMAN_CONTRACT_ADDRESS = "";
 export const HANGMAN_ABI = [
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "_player",
-        "type": "address"
+        internalType: "address",
+        name: "_player",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "_factory",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "_factory",
+        type: "address",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "ebool",
-        "name": "flag0",
-        "type": "bytes32"
+        indexed: false,
+        internalType: "ebool",
+        name: "flag0",
+        type: "bytes32",
       },
       {
-        "indexed": false,
-        "internalType": "ebool",
-        "name": "flag1",
-        "type": "bytes32"
+        indexed: false,
+        internalType: "ebool",
+        name: "flag1",
+        type: "bytes32",
       },
       {
-        "indexed": false,
-        "internalType": "ebool",
-        "name": "flag2",
-        "type": "bytes32"
+        indexed: false,
+        internalType: "ebool",
+        name: "flag2",
+        type: "bytes32",
       },
       {
-        "indexed": false,
-        "internalType": "ebool",
-        "name": "flag3",
-        "type": "bytes32"
+        indexed: false,
+        internalType: "ebool",
+        name: "flag3",
+        type: "bytes32",
       },
       {
-        "indexed": false,
-        "internalType": "euint256",
-        "name": "tile",
-        "type": "bytes32"
+        indexed: false,
+        internalType: "euint256",
+        name: "tile",
+        type: "bytes32",
       },
       {
-        "indexed": false,
-        "internalType": "euint256",
-        "name": "newLives",
-        "type": "bytes32"
+        indexed: false,
+        internalType: "euint256",
+        name: "newLives",
+        type: "bytes32",
       },
       {
-        "indexed": false,
-        "internalType": "ebool",
-        "name": "newHasWon",
-        "type": "bytes32"
-      }
+        indexed: false,
+        internalType: "ebool",
+        name: "newHasWon",
+        type: "bytes32",
+      },
     ],
-    "name": "GuessResult",
-    "type": "event"
+    name: "GuessResult",
+    type: "event",
   },
   {
-    "inputs": [],
-    "name": "getCurrentStatus",
-    "outputs": [
+    inputs: [],
+    name: "getCurrentStatus",
+    outputs: [
       {
-        "internalType": "ebool",
-        "name": "",
-        "type": "bytes32"
+        internalType: "ebool",
+        name: "",
+        type: "bytes32",
       },
       {
-        "internalType": "ebool",
-        "name": "",
-        "type": "bytes32"
+        internalType: "ebool",
+        name: "",
+        type: "bytes32",
       },
       {
-        "internalType": "ebool",
-        "name": "",
-        "type": "bytes32"
+        internalType: "ebool",
+        name: "",
+        type: "bytes32",
       },
       {
-        "internalType": "ebool",
-        "name": "",
-        "type": "bytes32"
+        internalType: "ebool",
+        name: "",
+        type: "bytes32",
       },
       {
-        "internalType": "euint256",
-        "name": "",
-        "type": "bytes32"
+        internalType: "euint256",
+        name: "",
+        type: "bytes32",
       },
       {
-        "internalType": "euint256",
-        "name": "",
-        "type": "bytes32"
+        internalType: "euint256",
+        name: "",
+        type: "bytes32",
       },
       {
-        "internalType": "ebool",
-        "name": "",
-        "type": "bytes32"
-      }
+        internalType: "ebool",
+        name: "",
+        type: "bytes32",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "getTile",
-    "outputs": [
+    inputs: [],
+    name: "getTile",
+    outputs: [
       {
-        "internalType": "euint256",
-        "name": "",
-        "type": "bytes32"
-      }
+        internalType: "euint256",
+        name: "",
+        type: "bytes32",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "letter",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "letter",
+        type: "string",
+      },
     ],
-    "name": "guessLetter",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "guessLetter",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "player",
-    "outputs": [
+    inputs: [],
+    name: "player",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "euint256",
-        "name": "packedWord",
-        "type": "bytes32"
-      }
+        internalType: "euint256",
+        name: "packedWord",
+        type: "bytes32",
+      },
     ],
-    "name": "setWord",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "setWord",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "tile",
-    "outputs": [
+    inputs: [],
+    name: "tile",
+    outputs: [
       {
-        "internalType": "euint256",
-        "name": "",
-        "type": "bytes32"
-      }
+        internalType: "euint256",
+        name: "",
+        type: "bytes32",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
-  }
+    stateMutability: "view",
+    type: "function",
+  },
 ];
 
-export const HANGMAN_FACTORY_CONTRACT_ADDRESS =
-  "0x7d73b3b90fb4adfa42e19d396eb2a3765188c3f0";
+// Note: HANGMAN_FACTORY_CONTRACT_ADDRESS is now provided by useContracts() hook
 export const HANGMAN_FACTORY_ABI = [
   {
     inputs: [

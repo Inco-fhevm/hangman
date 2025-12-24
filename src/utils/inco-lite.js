@@ -50,7 +50,9 @@ export function SessionVoucherProvider({ children }) {
 export function useSessionVoucher() {
   const context = useContext(SessionVoucherContext);
   if (!context) {
-    throw new Error('useSessionVoucher must be used within a SessionVoucherProvider');
+    throw new Error(
+      "useSessionVoucher must be used within a SessionVoucherProvider"
+    );
   }
   return context;
 }
@@ -62,15 +64,17 @@ export function useClearSession() {
 }
 
 /**
- * Get or initialize the Inco configuration based on the current chain
+ * Get or initialize the Inco configuration based on the current chain and environment
  */
-export async function getConfig(chainId) {
+export async function getConfig(chainId, incoEnv) {
   if (incoConfig) return incoConfig;
 
-  console.log(`🔧 Initializing Inco config for chain: ${chainId}`);
+  console.log(
+    `🔧 Initializing Inco config for chain: ${chainId}, env: ${incoEnv}`
+  );
 
   if (chainId === 84532) {
-    incoConfig = await Lightning.latest("devnet", 84532); // Base Sepolia
+    incoConfig = await Lightning.latest(incoEnv, 84532); // Base Sepolia
   } else {
     throw new Error(`Unsupported chain ID: ${chainId}`);
   }
@@ -81,66 +85,71 @@ export async function getConfig(chainId) {
  * Initialize session voucher for attested decrypt with session key
  */
 export function useInitializeSessionVoucher() {
-  const { sessionVoucherWrapper, setSessionVoucherWrapper, hasValidSession } = useSessionVoucher();
+  const { sessionVoucherWrapper, setSessionVoucherWrapper, hasValidSession } =
+    useSessionVoucher();
 
-  return useCallback(async (walletClient, chainId, publicClient) => {
-    // Check if we already have a valid session in memory
-    if (hasValidSession()) {
-      console.log("Using existing session voucher from memory");
-      const { voucher, keypair } = sessionVoucherWrapper;
-      return { voucher, keypair };
-    }
+  return useCallback(
+    async (walletClient, chainId, publicClient, incoEnv) => {
+      // Check if we already have a valid session in memory
+      if (hasValidSession()) {
+        console.log("Using existing session voucher from memory");
+        const { voucher, keypair } = sessionVoucherWrapper;
+        return { voucher, keypair };
+      }
 
-    console.log("Creating new session voucher");
-    const inco = await getConfig(chainId);
+      console.log("Creating new session voucher");
+      const inco = await getConfig(chainId, incoEnv);
 
-    // Generate ephemeral keypair for session
-    const ephemeralKeypair = await generateSecp256k1Keypair();
-    const privateKey = `0x${ephemeralKeypair.kp.getPrivate("hex")}`;
-    console.log("Private key:", privateKey);
+      // Generate ephemeral keypair for session
+      const ephemeralKeypair = await generateSecp256k1Keypair();
+      const privateKey = `0x${ephemeralKeypair.kp.getPrivate("hex")}`;
+      console.log("Private key:", privateKey);
 
-    const ephemeralAccount = privateKeyToAccount(privateKey);
+      const ephemeralAccount = privateKeyToAccount(privateKey);
 
-    console.log("Ephemeral account:", ephemeralAccount);
-    console.log("Ephemeral account address:", ephemeralAccount.address);
+      console.log("Ephemeral account:", ephemeralAccount);
+      console.log("Ephemeral account address:", ephemeralAccount.address);
 
-    // const executorAddress = inco.executorAddress;
-    // console.log("Inco executor address:", executorAddress);
+      // const executorAddress = inco.executorAddress;
+      // console.log("Inco executor address:", executorAddress);
 
-    // const incoVerifier = await Lightning.getIncoVerifierContract(
-    //   publicClient,
-    //   executorAddress
-    // );
-    // const incoVerifierAddress = incoVerifier.address;
-    const sessionVerifierAddress = "0xc34569efc25901bdd6b652164a2c8a7228b23005";
-    console.log("Inco verifier address:", sessionVerifierAddress);
+      // const incoVerifier = await Lightning.getIncoVerifierContract(
+      //   publicClient,
+      //   executorAddress
+      // );
+      // const incoVerifierAddress = incoVerifier.address;
+      const sessionVerifierAddress =
+        "0xc34569efc25901bdd6b652164a2c8a7228b23005";
+      console.log("Inco verifier address:", sessionVerifierAddress);
 
-    // Create voucher valid for 24 hours
-    const expirationDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
+      // Create voucher valid for 24 hours
+      const expirationDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 
-    console.log("🔑 Creating session voucher for attested decrypt...");
-    console.log("Ephemeral account address:", ephemeralAccount.address);
-    console.log("Inco verifier address:", sessionVerifierAddress);
+      console.log("🔑 Creating session voucher for attested decrypt...");
+      console.log("Ephemeral account address:", ephemeralAccount.address);
+      console.log("Inco verifier address:", sessionVerifierAddress);
 
-    const sessionVoucher = await inco.grantSessionKeyAllowanceVoucher(
-      walletClient,
-      ephemeralAccount.address,
-      expirationDate,
-      sessionVerifierAddress
-    );
+      const sessionVoucher = await inco.grantSessionKeyAllowanceVoucher(
+        walletClient,
+        ephemeralAccount.address,
+        expirationDate,
+        sessionVerifierAddress
+      );
 
-    console.log("✅ Session voucher created:", sessionVoucher);
+      console.log("✅ Session voucher created:", sessionVoucher);
 
-    // Store session data in context
-    const newSessionWrapper = {
-      voucher: sessionVoucher,
-      keypair: ephemeralKeypair,
-      expiration: expirationDate,
-    };
-    setSessionVoucherWrapper(newSessionWrapper);
+      // Store session data in context
+      const newSessionWrapper = {
+        voucher: sessionVoucher,
+        keypair: ephemeralKeypair,
+        expiration: expirationDate,
+      };
+      setSessionVoucherWrapper(newSessionWrapper);
 
-    return { voucher: sessionVoucher, keypair: ephemeralKeypair };
-  }, [sessionVoucherWrapper, setSessionVoucherWrapper, hasValidSession]);
+      return { voucher: sessionVoucher, keypair: ephemeralKeypair };
+    },
+    [sessionVoucherWrapper, setSessionVoucherWrapper, hasValidSession]
+  );
 }
 
 /**
@@ -151,8 +160,9 @@ export async function encryptValue({
   address,
   contractAddress,
   chainId,
+  incoEnv,
 }) {
-  const inco = await getConfig(chainId);
+  const inco = await getConfig(chainId, incoEnv);
 
   const encryptedData = await inco.encrypt(BigInt(value), {
     accountAddress: address,
@@ -172,44 +182,42 @@ export function useDecryptValue() {
   const { sessionVoucherWrapper, hasValidSession } = useSessionVoucher();
   const initializeSessionVoucher = useInitializeSessionVoucher();
 
-  return useCallback(async ({
-    walletClient,
-    handle,
-    chainId,
-    publicClient,
-  }) => {
-    const inco = await getConfig(chainId);
+  return useCallback(
+    async ({ walletClient, handle, chainId, publicClient, incoEnv }) => {
+      const inco = await getConfig(chainId, incoEnv);
 
-    // Ensure we have a session voucher initialized
-    if (!hasValidSession()) {
-      await initializeSessionVoucher(walletClient, chainId, publicClient);
-    }
+      // Ensure we have a session voucher initialized
+      if (!hasValidSession()) {
+        await initializeSessionVoucher(walletClient, chainId, publicClient);
+      }
 
-    const { voucher, keypair } = sessionVoucherWrapper;
+      const { voucher, keypair } = sessionVoucherWrapper;
 
-    // Use attested decrypt with voucher
-    console.log("Decrypting handle:", handle, "type:", typeof handle);
+      // Use attested decrypt with voucher
+      console.log("Decrypting handle:", handle, "type:", typeof handle);
 
-    console.log("using session voucher: ", voucher);
-    const decrypted = await inco.attestedDecryptWithVoucher(
-      keypair,
-      voucher,
-      publicClient,
-      [handle]
-    );
+      console.log("using session voucher: ", voucher);
+      const decrypted = await inco.attestedDecryptWithVoucher(
+        keypair,
+        voucher,
+        publicClient,
+        [handle]
+      );
 
-    // const decrypted = await inco.attestedDecrypt(walletClient, [handle]);
+      // const decrypted = await inco.attestedDecrypt(walletClient, [handle]);
 
-    // Return the decrypted value
-    return decrypted[0].plaintext.value;
-  }, [sessionVoucherWrapper, hasValidSession, initializeSessionVoucher]);
+      // Return the decrypted value
+      return decrypted[0].plaintext.value;
+    },
+    [sessionVoucherWrapper, hasValidSession, initializeSessionVoucher]
+  );
 }
 
 /**
  * Get the fee required for Inco operations
  */
-export async function getFee(chainId) {
-  const inco = await getConfig(chainId);
+export async function getFee(chainId, incoEnv) {
+  const inco = await getConfig(chainId, incoEnv);
 
   // Read the fee from the Lightning contract
   const fee = await inco.publicClient.readContract({
