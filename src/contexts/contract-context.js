@@ -1,48 +1,39 @@
 "use client";
-import React, { createContext, useContext, ReactNode } from "react";
+
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
-interface ContractData {
-  hangmanFactoryContract: {
-    address: string;
-  };
-  incoEnv: string;
-  reownAppId: string;
-}
+const ContractContext = createContext(null);
 
-interface ContractContextType {
-  contracts: ContractData | undefined;
-  isLoading: boolean;
-  isError: boolean;
-}
+export const ContractProvider = ({ children }) => {
+  const [isClient, setIsClient] = useState(false);
 
-const ContractContext = createContext<ContractContextType | undefined>(
-  undefined
-);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
-export const ContractProvider = ({ children }: { children: ReactNode }) => {
-  const { data, isLoading, isError } = useQuery<ContractData>({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["contracts"],
     queryFn: async () => {
       const res = await fetch("/api/contracts");
       if (!res.ok) throw new Error("Failed to fetch contract data");
       return res.json();
     },
+    enabled: isClient, // Only run query on client side
   });
 
-  if (isLoading) {
+  if (!isClient || isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
-       <Loader2
-       className="w-10 h-10 animate-spin text-primary"
-       />
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
       </div>
     );
   }
+
   if (isError || !data) {
     return (
-      <div className="w-full h-screen flex items-center bg-background justify-center text-red-500">
+      <div className="w-full h-screen flex items-center justify-center bg-background text-red-500">
         Failed to load contract configuration.
       </div>
     );

@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
 
+export const dynamic = "force-dynamic";
+
 import Navbar from "@/components/navbar";
 import Keyboard from "@/components/keyboard";
 import Stage from "@/components/stages/stage";
