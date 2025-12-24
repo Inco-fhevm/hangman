@@ -1,12 +1,7 @@
 import { ErrorMessage } from "./error-message";
-import { BurnerWalletGuide } from "./burner-wallet-guide";
-import { useBurnerWallet } from "@/context/burner-wallet-context";
 
 export const StartGameButton = ({ onStartGame, isLoading, error }) => {
-  const { isCreating } = useBurnerWallet();
-  
   const getButtonText = () => {
-    if (isCreating) return "Creating Wallet...";
     if (isLoading) return "Preparing Game...";
     return "Start Game";
   };
@@ -17,7 +12,6 @@ export const StartGameButton = ({ onStartGame, isLoading, error }) => {
       <h2 className="text-2xl md:text-5xl font-bold text-[#3673F5] mb-6">
         Ready to Play?
       </h2>
-      <BurnerWalletGuide />
       <button
         onClick={onStartGame}
         disabled={isLoading}

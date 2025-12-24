@@ -12,8 +12,6 @@ import {
   useWalletClient,
   useWriteContract,
 } from "wagmi";
-import { useBurnerWallet } from "@/context/burner-wallet-context";
-import { parseEther } from "viem";
 
 export const useHangmanGame = () => {
   const { contracts } = useContracts();
@@ -42,12 +40,6 @@ export const useHangmanGame = () => {
   const walletClient = useWalletClient();
   const chainId = useChainId();
   const { address } = useAccount();
-  const {
-    burnerWallet,
-    createBurnerWallet,
-    hasWallet: hasBurnerWallet,
-    isCreating: isCreatingBurner,
-  } = useBurnerWallet();
 
   // Inco session hooks
   const initializeSessionVoucher = useInitializeSessionVoucher();
@@ -84,16 +76,6 @@ export const useHangmanGame = () => {
     }
   }, [correctTiles, incorrectCount]);
 
-  // Clear burner wallet creation errors when wallet becomes available
-  useEffect(() => {
-    if (
-      hasBurnerWallet &&
-      startGameError?.includes("Failed to create burner wallet")
-    ) {
-      setStartGameError(null);
-    }
-  }, [hasBurnerWallet, startGameError]);
-
   const handleStartGame = async () => {
     setStartGameLoading(true);
     setStartGameError(null);
@@ -112,7 +94,7 @@ export const useHangmanGame = () => {
         address: contracts.hangmanFactoryContract.address,
         abi: HANGMAN_FACTORY_ABI,
         functionName: "CreateGame",
-        args: [activeBurnerWallet.account.address],
+        args: [address],
       });
 
       const receipt = await publicClient.waitForTransactionReceipt({
@@ -127,7 +109,7 @@ export const useHangmanGame = () => {
         address: contracts.hangmanFactoryContract.address,
         abi: HANGMAN_FACTORY_ABI,
         functionName: "getGameAddressByPlayer",
-        args: [activeBurnerWallet.account.address],
+        args: [address],
       });
 
       setHangmanContractAddress(gameContractAddress);
@@ -146,7 +128,7 @@ export const useHangmanGame = () => {
         }
       }, 0);
 
-      console.log("🎮 Game started successfully with burner wallet!");
+      console.log("🎮 Game started successfully!");
     } catch (error) {
       console.error("Failed to start game:", error);
       setStartGameError(
@@ -174,14 +156,7 @@ export const useHangmanGame = () => {
         setGuessError(null);
 
         try {
-          // Use burner wallet for guessing letters
-          if (!burnerWallet) {
-            throw new Error(
-              "Burner wallet not available. Please restart the game."
-            );
-          }
-
-          const hash = await burnerWallet.writeContract({
+          const hash = await writeContractAsync({
             address: hangmanContractAddress,
             abi: HANGMAN_ABI,
             functionName: "guessLetter",
@@ -426,7 +401,7 @@ export const useHangmanGame = () => {
     activeIndex,
     isMobile,
     inputRefs,
-    startGameLoading: startGameLoading || isCreatingBurner,
+    startGameLoading,
     startGameError,
     guessLoading,
     guessError,

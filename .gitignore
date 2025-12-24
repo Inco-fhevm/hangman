@@ -17,6 +17,9 @@
 # production
 /build
 
+# artifacts
+/contracts/artifacts/
+
 # misc
 .DS_Store
 *.pem
