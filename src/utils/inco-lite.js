@@ -89,7 +89,7 @@ export async function getConfig(chainId) {
   console.log(`🔧 Initializing Inco config for chain: ${chainId}`);
 
   if (chainId === 84532) {
-    incoConfig = await Lightning.latest("devnet", 84532); // Base Sepolia
+    incoConfig = await Lightning.latest("testnet", 84532); // Base Sepolia
   } else {
     throw new Error(`Unsupported chain ID: ${chainId}`);
   }
