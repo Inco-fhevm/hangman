@@ -9,3 +9,5 @@ export const QueryProvider = ({ children }) => {
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
 };
+
+
