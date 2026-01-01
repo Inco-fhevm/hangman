@@ -3,14 +3,14 @@
   "workspaces": {
     "": {
       "dependencies": {
-        "@inco/lightning": "0.7.6-devnet-1",
+        "@inco/lightning": "0.7.6-testnet",
         "@nomicfoundation/hardhat-toolbox": "^5.0.0",
         "@openzeppelin/contracts": "^5.2.0",
         "@openzeppelin/contracts-upgradeable": "^5.2.0",
         "dotenv": "^16.4.7",
       },
       "devDependencies": {
-        "@inco/js": "^0.7.6-devnet-1",
+        "@inco/js": "^0.7.6-testnet",
         "@nomicfoundation/hardhat-ignition": "^0.15.0",
         "@nomicfoundation/hardhat-ignition-viem": "^0.15.0",
         "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
@@ -166,9 +166,9 @@
 
     "@grpc/proto-loader": ["@grpc/proto-loader@0.8.0", "", { "dependencies": { "lodash.camelcase": "^4.3.0", "long": "^5.0.0", "protobufjs": "^7.5.3", "yargs": "^17.7.2" }, "bin": { "proto-loader-gen-types": "build/bin/proto-loader-gen-types.js" } }, "sha512-rc1hOQtjIWGxcxpb9aHAfLpIctjEnsDehj0DAiVfBlmT84uvR0uUtN2hEi/ecvWVjXUGf5qPF4qEgiLOx1YIMQ=="],
 
-    "@inco/js": ["@inco/js@0.7.6-devnet-1", "", { "dependencies": { "@bufbuild/protobuf": "^2.2.3", "@connectrpc/connect": "^2.0.0", "@connectrpc/connect-node": "^2.0.0", "@connectrpc/connect-web": "^2.0.1", "@grpc/grpc-js": "^1.13.4", "@types/elliptic": "^6.4.18", "ecies-geth": "^1.7.5", "effect": "^3.17.13", "elliptic": "^6.6.1", "sha3": "^2.1.4", "viem": "^2.39.3" } }, "sha512-ukliw6TqgkMdgXYqUtA4v76pQDET6csJeb7VQ4ozbEc9+R3pUksd9/hLu4J8RL4WfzNk5tdxBj9MtsovEAgnJQ=="],
+    "@inco/js": ["@inco/js@0.7.6-testnet", "", { "dependencies": { "@bufbuild/protobuf": "^2.2.3", "@connectrpc/connect": "^2.0.0", "@connectrpc/connect-node": "^2.0.0", "@connectrpc/connect-web": "^2.0.1", "@grpc/grpc-js": "^1.13.4", "@types/elliptic": "^6.4.18", "ecies-geth": "^1.7.5", "effect": "^3.17.13", "elliptic": "^6.6.1", "sha3": "^2.1.4", "viem": "^2.39.3" } }, "sha512-9ooep0erOoxa7i3gygdVkrXSp5fJnTUMCdR7xOQDdMmU7bnZWM3fPVDUsMFB/GFnz92T4pUyemuAVuV8zeECzQ=="],
 
-    "@inco/lightning": ["@inco/lightning@0.7.6-devnet-1", "", { "dependencies": { "@inco/shared": "^0.1.0", "@openzeppelin/contracts": "^5.2.0", "@openzeppelin/contracts-upgradeable": "^5.2.0", "@safe-global/safe-smart-account": "https://github.com/safe-global/safe-smart-account.git#v1.5.0", "ds-test": "https://github.com/dapphub/ds-test", "forge-std": "https://github.com/foundry-rs/forge-std", "tsx": "^4.19.3" } }, "sha512-LEy8x+QnvlSt9S9OkFwKIANAy+hKZbOM4/gEopBNlTISltOZG/1Vc3pa/px9zKx0kIIqDzDn8wSCRkceRGVSeA=="],
+    "@inco/lightning": ["@inco/lightning@0.7.6-testnet", "", { "dependencies": { "@inco/shared": "^0.1.0", "@openzeppelin/contracts": "^5.2.0", "@openzeppelin/contracts-upgradeable": "^5.2.0", "@safe-global/safe-smart-account": "https://github.com/safe-global/safe-smart-account.git#v1.5.0", "ds-test": "https://github.com/dapphub/ds-test", "forge-std": "https://github.com/foundry-rs/forge-std", "tsx": "^4.19.3" } }, "sha512-HvawcZ4fIGcxBbsDLGad7im5Z02yTr2M39/d+aRqSTLEiDbXWNoWi+8owqn4qJYkmk5KU5IWyhOcCIhO3xtL/g=="],
 
     "@inco/shared": ["@inco/shared@0.1.0", "", { "dependencies": { "@openzeppelin/contracts": "^5.2.0", "ds-test": "https://github.com/dapphub/ds-test", "forge-std": "https://github.com/foundry-rs/forge-std" } }, "sha512-Yw4KnTCGJPMGlWFq1JEpuadoNYFEXA+TObwNsR2Tq9ICgf0iVksSYatqiUeHaB1/J9Vyo5obZOKsU92Oieacog=="],
 
@@ -612,7 +612,7 @@
 
     "for-each": ["for-each@0.3.5", "", { "dependencies": { "is-callable": "^1.2.7" } }, "sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg=="],
 
-    "forge-std": ["forge-std@github:foundry-rs/forge-std#27ba11c", {}, "foundry-rs-forge-std-27ba11c"],
+    "forge-std": ["forge-std@github:foundry-rs/forge-std#26048ab", {}, "foundry-rs-forge-std-26048ab"],
 
     "form-data": ["form-data@4.0.5", "", { "dependencies": { "asynckit": "^0.4.0", "combined-stream": "^1.0.8", "es-set-tostringtag": "^2.1.0", "hasown": "^2.0.2", "mime-types": "^2.1.12" } }, "sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w=="],
 
@@ -1129,6 +1129,10 @@
     "@ethersproject/signing-key/bn.js": ["bn.js@5.2.2", "", {}, "sha512-v2YAxEmKaBLahNwE1mjp4WON6huMNeuDvagFZW+ASCuA/ku0bXR9hSMw0XpiqMoA3+rmnyck/tPRSFQkoC9Cuw=="],
 
     "@grpc/proto-loader/yargs": ["yargs@17.7.2", "", { "dependencies": { "cliui": "^8.0.1", "escalade": "^3.1.1", "get-caller-file": "^2.0.5", "require-directory": "^2.1.1", "string-width": "^4.2.3", "y18n": "^5.0.5", "yargs-parser": "^21.1.1" } }, "sha512-7dSzzRQ++CKnNI/krKnYRV7JKKPUXMEh61soaHKg9mrWEhzFWhFnxPxGl+69cD1Ou63C13NUPCnmIcrvqCuM6w=="],
+
+    "@inco/shared/ds-test": ["ds-test@github:dapphub/ds-test#e282159", {}, "dapphub-ds-test-e282159"],
+
+    "@inco/shared/forge-std": ["forge-std@github:foundry-rs/forge-std#27ba11c", {}, "foundry-rs-forge-std-27ba11c"],
 
     "@nomicfoundation/ignition-core/@ethersproject/address": ["@ethersproject/address@5.6.1", "", { "dependencies": { "@ethersproject/bignumber": "^5.6.2", "@ethersproject/bytes": "^5.6.1", "@ethersproject/keccak256": "^5.6.1", "@ethersproject/logger": "^5.6.0", "@ethersproject/rlp": "^5.6.1" } }, "sha512-uOgF0kS5MJv9ZvCz7x6T2EXJSzotiybApn4XlOgoTX0xdtyVIJ7pF+6cGPxiEq/dpBiTfMiw7Yc81JcwhSYA0Q=="],
 
