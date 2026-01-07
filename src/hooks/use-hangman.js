@@ -87,7 +87,8 @@ export const useHangmanGame = () => {
         walletClient.data,
         chainId,
         publicClient,
-        contracts.incoEnv
+        contracts.incoEnv,
+        address
       );
 
       const hash = await writeContractAsync({
@@ -189,6 +190,7 @@ export const useHangmanGame = () => {
               chainId,
               publicClient,
               incoEnv: contracts.incoEnv,
+              userAddress: address,
             });
 
             const tilePosition = parseInt(decryptedTile.toString());
