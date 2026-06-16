@@ -15,6 +15,66 @@ export interface ITrivialEncryption$Type {
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "allow",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "allowTransient",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "allowedTransient",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "value",
           "type": "address"
@@ -66,6 +126,226 @@ export interface ITrivialEncryption$Type {
           "type": "bytes32"
         }
       ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "sharer",
+              "type": "address"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "warning",
+                  "type": "string"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "sessionNonce",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "address",
+                  "name": "verifyingContract",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes4",
+                  "name": "callFunction",
+                  "type": "bytes4"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "sharerArgData",
+                  "type": "bytes"
+                }
+              ],
+              "internalType": "struct AllowanceVoucher",
+              "name": "voucher",
+              "type": "tuple"
+            },
+            {
+              "internalType": "bytes",
+              "name": "voucherSignature",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "requesterArgData",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct AllowanceProof",
+          "name": "proof",
+          "type": "tuple"
+        }
+      ],
+      "name": "claimHandle",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getEventCounter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getNextEventId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum EOps",
+          "name": "op",
+          "type": "uint8"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "returnType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes",
+          "name": "packedInputs",
+          "type": "bytes"
+        }
+      ],
+      "name": "getOpResultHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "plaintextBytes",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "handleType",
+          "type": "uint8"
+        }
+      ],
+      "name": "getTrivialEncryptHandle",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "generatedHandle",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "incoVerifier",
+      "outputs": [
+        {
+          "internalType": "contract IIncoVerifier",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "isAllowed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "persistAllowed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        }
+      ],
+      "name": "reveal",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     }

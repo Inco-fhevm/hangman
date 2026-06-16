@@ -14,7 +14,48 @@ export interface EncryptedOperations$Type {
   "abi": [
     {
       "inputs": [],
+      "name": "EnforcedPause",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ExpectedPause",
+      "type": "error"
+    },
+    {
+      "inputs": [],
       "name": "FeeNotPaid",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FeeWithdrawalFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidInitialization",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "raw",
+          "type": "uint8"
+        }
+      ],
+      "name": "InvalidTypeValue",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NoFeesToWithdraw",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotInitializing",
       "type": "error"
     },
     {
@@ -36,6 +77,17 @@ export interface EncryptedOperations$Type {
         }
       ],
       "name": "ProofVerificationFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum ETypes",
+          "name": "t",
+          "type": "uint8"
+        }
+      ],
+      "name": "SameTypeCast",
       "type": "error"
     },
     {
@@ -651,37 +703,6 @@ export interface EncryptedOperations$Type {
         {
           "indexed": true,
           "internalType": "bytes32",
-          "name": "result",
-          "type": "bytes32"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "eventId",
-          "type": "uint256"
-        }
-      ],
-      "name": "ERand",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "counter",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "enum ETypes",
-          "name": "randType",
-          "type": "uint8"
-        },
-        {
-          "indexed": true,
-          "internalType": "bytes32",
           "name": "upperBound",
           "type": "bytes32"
         },
@@ -892,6 +913,32 @@ export interface EncryptedOperations$Type {
       "inputs": [
         {
           "indexed": false,
+          "internalType": "uint64",
+          "name": "version",
+          "type": "uint64"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "bytes32",
           "name": "handle",
           "type": "bytes32"
@@ -904,6 +951,19 @@ export interface EncryptedOperations$Type {
         }
       ],
       "name": "Reveal",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
       "type": "event"
     },
     {
@@ -983,6 +1043,11 @@ export interface EncryptedOperations$Type {
             {
               "components": [
                 {
+                  "internalType": "string",
+                  "name": "warning",
+                  "type": "string"
+                },
+                {
                   "internalType": "bytes32",
                   "name": "sessionNonce",
                   "type": "bytes32"
@@ -1024,13 +1089,6 @@ export interface EncryptedOperations$Type {
         }
       ],
       "name": "claimHandle",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "cleanTransientStorage",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -1446,25 +1504,6 @@ export interface EncryptedOperations$Type {
     {
       "inputs": [
         {
-          "internalType": "enum ETypes",
-          "name": "randType",
-          "type": "uint8"
-        }
-      ],
-      "name": "eRand",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "result",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes32",
           "name": "upperBound",
           "type": "bytes32"
@@ -1632,6 +1671,43 @@ export interface EncryptedOperations$Type {
     },
     {
       "inputs": [],
+      "name": "getBitFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "nOfElements",
+          "type": "uint16"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "elType",
+          "type": "uint8"
+        }
+      ],
+      "name": "getEListFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "getEventCounter",
       "outputs": [
         {
@@ -1768,6 +1844,19 @@ export interface EncryptedOperations$Type {
         }
       ],
       "name": "isRevealed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
       "outputs": [
         {
           "internalType": "bool",

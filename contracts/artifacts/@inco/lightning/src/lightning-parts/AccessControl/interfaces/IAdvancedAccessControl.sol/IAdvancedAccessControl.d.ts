@@ -17,6 +17,11 @@ export interface IAdvancedAccessControl$Type {
         {
           "components": [
             {
+              "internalType": "string",
+              "name": "warning",
+              "type": "string"
+            },
+            {
               "internalType": "bytes32",
               "name": "sessionNonce",
               "type": "bytes32"
@@ -94,6 +99,11 @@ export interface IAdvancedAccessControl$Type {
             {
               "components": [
                 {
+                  "internalType": "string",
+                  "name": "warning",
+                  "type": "string"
+                },
+                {
                   "internalType": "bytes32",
                   "name": "sessionNonce",
                   "type": "bytes32"
@@ -146,7 +156,13 @@ export interface IAdvancedAccessControl$Type {
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        }
+      ],
       "name": "updateActiveVouchersSessionNonce",
       "outputs": [],
       "stateMutability": "nonpayable",

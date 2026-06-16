@@ -10,6 +10,64 @@
     },
     {
       "inputs": [],
+      "name": "FeeWithdrawalFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NoFeesToWithdraw",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum ETypes",
+          "name": "actual",
+          "type": "uint8"
+        }
+      ],
+      "name": "UnsupportedType",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "getBitFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "nOfElements",
+          "type": "uint16"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "elType",
+          "type": "uint8"
+        }
+      ],
+      "name": "getEListFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "getFee",
       "outputs": [
         {

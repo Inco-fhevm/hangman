@@ -8,6 +8,11 @@
         {
           "components": [
             {
+              "internalType": "string",
+              "name": "warning",
+              "type": "string"
+            },
+            {
               "internalType": "bytes32",
               "name": "sessionNonce",
               "type": "bytes32"
@@ -85,6 +90,11 @@
             {
               "components": [
                 {
+                  "internalType": "string",
+                  "name": "warning",
+                  "type": "string"
+                },
+                {
                   "internalType": "bytes32",
                   "name": "sessionNonce",
                   "type": "bytes32"
@@ -137,7 +147,13 @@
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        }
+      ],
       "name": "updateActiveVouchersSessionNonce",
       "outputs": [],
       "stateMutability": "nonpayable",

@@ -20,6 +20,10 @@
 # artifacts
 /contracts/artifacts/
 
+.agents/
+.claude/
+skills-lock.json
+
 # misc
 .DS_Store
 *.pem

@@ -7,15 +7,20 @@ import "hardhat/types/artifacts";
 import type { GetContractReturnType } from "@nomicfoundation/hardhat-viem/types";
 
 import { EncryptedInput$Type } from "./EncryptedInput";
+import { EncryptedInputStorage$Type } from "./EncryptedInputStorage";
 
 declare module "hardhat/types/artifacts" {
   interface ArtifactsMap {
     ["EncryptedInput"]: EncryptedInput$Type;
+    ["EncryptedInputStorage"]: EncryptedInputStorage$Type;
     ["@inco/lightning/src/lightning-parts/EncryptedInput.sol:EncryptedInput"]: EncryptedInput$Type;
+    ["@inco/lightning/src/lightning-parts/EncryptedInput.sol:EncryptedInputStorage"]: EncryptedInputStorage$Type;
   }
 
   interface ContractTypesMap {
     ["EncryptedInput"]: GetContractReturnType<EncryptedInput$Type["abi"]>;
+    ["EncryptedInputStorage"]: GetContractReturnType<EncryptedInputStorage$Type["abi"]>;
     ["@inco/lightning/src/lightning-parts/EncryptedInput.sol:EncryptedInput"]: GetContractReturnType<EncryptedInput$Type["abi"]>;
+    ["@inco/lightning/src/lightning-parts/EncryptedInput.sol:EncryptedInputStorage"]: GetContractReturnType<EncryptedInputStorage$Type["abi"]>;
   }
 }

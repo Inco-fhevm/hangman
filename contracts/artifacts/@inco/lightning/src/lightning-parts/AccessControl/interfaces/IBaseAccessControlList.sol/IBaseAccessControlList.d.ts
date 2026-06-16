@@ -89,6 +89,11 @@ export interface IBaseAccessControlList$Type {
             {
               "components": [
                 {
+                  "internalType": "string",
+                  "name": "warning",
+                  "type": "string"
+                },
+                {
                   "internalType": "bytes32",
                   "name": "sessionNonce",
                   "type": "bytes32"
@@ -136,9 +141,28 @@ export interface IBaseAccessControlList$Type {
     },
     {
       "inputs": [],
-      "name": "cleanTransientStorage",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "name": "getEventCounter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getNextEventId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -200,6 +224,19 @@ export interface IBaseAccessControlList$Type {
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        }
+      ],
+      "name": "reveal",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     }
   ],

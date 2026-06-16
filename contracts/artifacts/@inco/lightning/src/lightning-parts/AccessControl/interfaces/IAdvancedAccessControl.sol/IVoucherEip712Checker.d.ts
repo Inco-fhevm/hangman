@@ -17,6 +17,11 @@ export interface IVoucherEip712Checker$Type {
         {
           "components": [
             {
+              "internalType": "string",
+              "name": "warning",
+              "type": "string"
+            },
+            {
               "internalType": "bytes32",
               "name": "sessionNonce",
               "type": "bytes32"

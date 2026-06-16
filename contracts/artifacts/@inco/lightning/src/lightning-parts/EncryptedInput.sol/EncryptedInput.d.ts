@@ -13,6 +13,16 @@ export interface EncryptedInput$Type {
   "sourceName": "@inco/lightning/src/lightning-parts/EncryptedInput.sol",
   "abi": [
     {
+      "inputs": [],
+      "name": "EnforcedPause",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ExpectedPause",
+      "type": "error"
+    },
+    {
       "inputs": [
         {
           "internalType": "bytes32",
@@ -43,6 +53,11 @@ export interface EncryptedInput$Type {
           "internalType": "address",
           "name": "contractAddress",
           "type": "address"
+        },
+        {
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
         }
       ],
       "name": "ExternalHandleDoesNotMatchComputedHandle",
@@ -54,6 +69,11 @@ export interface EncryptedInput$Type {
       "type": "error"
     },
     {
+      "inputs": [],
+      "name": "FeeWithdrawalFailed",
+      "type": "error"
+    },
+    {
       "inputs": [
         {
           "internalType": "bytes32",
@@ -62,6 +82,54 @@ export interface EncryptedInput$Type {
         }
       ],
       "name": "HandleAlreadyExists",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "length",
+          "type": "uint256"
+        }
+      ],
+      "name": "InputLengthTooShort",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidInitialization",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
+        }
+      ],
+      "name": "InvalidInputVersion",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "raw",
+          "type": "uint8"
+        }
+      ],
+      "name": "InvalidTypeValue",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NoFeesToWithdraw",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotInitializing",
       "type": "error"
     },
     {
@@ -102,6 +170,17 @@ export interface EncryptedInput$Type {
       "type": "error"
     },
     {
+      "inputs": [
+        {
+          "internalType": "enum ETypes",
+          "name": "actual",
+          "type": "uint8"
+        }
+      ],
+      "name": "UnsupportedType",
+      "type": "error"
+    },
+    {
       "anonymous": false,
       "inputs": [
         {
@@ -130,6 +209,19 @@ export interface EncryptedInput$Type {
       "anonymous": false,
       "inputs": [
         {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "version",
+          "type": "uint64"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": true,
           "internalType": "bytes32",
           "name": "result",
@@ -146,6 +238,12 @@ export interface EncryptedInput$Type {
           "internalType": "address",
           "name": "user",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
         },
         {
           "indexed": false,
@@ -168,6 +266,19 @@ export interface EncryptedInput$Type {
       "inputs": [
         {
           "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "bytes32",
           "name": "handle",
           "type": "bytes32"
@@ -180,6 +291,45 @@ export interface EncryptedInput$Type {
         }
       ],
       "name": "Reveal",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
+        }
+      ],
+      "name": "VersionAccepted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
+        }
+      ],
+      "name": "VersionRemoved",
       "type": "event"
     },
     {
@@ -259,6 +409,11 @@ export interface EncryptedInput$Type {
             {
               "components": [
                 {
+                  "internalType": "string",
+                  "name": "warning",
+                  "type": "string"
+                },
+                {
                   "internalType": "bytes32",
                   "name": "sessionNonce",
                   "type": "bytes32"
@@ -306,9 +461,39 @@ export interface EncryptedInput$Type {
     },
     {
       "inputs": [],
-      "name": "cleanTransientStorage",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "name": "getBitFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "nOfElements",
+          "type": "uint16"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "elType",
+          "type": "uint8"
+        }
+      ],
+      "name": "getEListFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -411,6 +596,25 @@ export interface EncryptedInput$Type {
           "internalType": "contract IIncoVerifier",
           "name": "",
           "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
+        }
+      ],
+      "name": "isAcceptedVersion",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -529,6 +733,19 @@ export interface EncryptedInput$Type {
         }
       ],
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {

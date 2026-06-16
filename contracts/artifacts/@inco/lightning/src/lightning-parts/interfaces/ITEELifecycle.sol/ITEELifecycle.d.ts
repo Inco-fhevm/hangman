@@ -31,7 +31,7 @@ export interface ITEELifecycle$Type {
           "components": [
             {
               "internalType": "bytes",
-              "name": "ecies_pubkey",
+              "name": "networkPubkey",
               "type": "bytes"
             }
           ],
@@ -302,7 +302,7 @@ export interface ITEELifecycle$Type {
           "components": [
             {
               "internalType": "bytes",
-              "name": "ecies_pubkey",
+              "name": "networkPubkey",
               "type": "bytes"
             }
           ],

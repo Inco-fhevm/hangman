@@ -11,9 +11,21 @@ export interface HandleMetadata$Type {
   "_format": "hh-sol-artifact-1",
   "contractName": "HandleMetadata",
   "sourceName": "@inco/lightning/src/lightning-parts/primitives/HandleMetadata.sol",
-  "abi": [],
-  "bytecode": "0x6080604052348015600e575f5ffd5b50603e80601a5f395ff3fe60806040525f5ffdfea26469706673582212200266a96928e15356147d06bcb552a70ebcfcb988ce2aa2e43ea990b01cbdb4ae64736f6c634300081c0033",
-  "deployedBytecode": "0x60806040525f5ffdfea26469706673582212200266a96928e15356147d06bcb552a70ebcfcb988ce2aa2e43ea990b01cbdb4ae64736f6c634300081c0033",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "raw",
+          "type": "uint8"
+        }
+      ],
+      "name": "InvalidTypeValue",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x6080604052348015600e575f5ffd5b50603e80601a5f395ff3fe60806040525f5ffdfea26469706673582212201bc67f41169741355302efa4bb1de8feb8c46316a8dc41155a92b786828829a064736f6c634300081e0033",
+  "deployedBytecode": "0x60806040525f5ffdfea26469706673582212201bc67f41169741355302efa4bb1de8feb8c46316a8dc41155a92b786828829a064736f6c634300081e0033",
   "linkReferences": {},
   "deployedLinkReferences": {}
 }

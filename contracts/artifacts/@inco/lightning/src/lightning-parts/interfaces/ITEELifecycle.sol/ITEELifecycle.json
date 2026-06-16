@@ -22,7 +22,7 @@
           "components": [
             {
               "internalType": "bytes",
-              "name": "ecies_pubkey",
+              "name": "networkPubkey",
               "type": "bytes"
             }
           ],
@@ -293,7 +293,7 @@
           "components": [
             {
               "internalType": "bytes",
-              "name": "ecies_pubkey",
+              "name": "networkPubkey",
               "type": "bytes"
             }
           ],

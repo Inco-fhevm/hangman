@@ -13,6 +13,37 @@ export interface TrivialEncryption$Type {
   "sourceName": "@inco/lightning/src/lightning-parts/TrivialEncryption.sol",
   "abi": [
     {
+      "inputs": [],
+      "name": "EnforcedPause",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ExpectedPause",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidInitialization",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "raw",
+          "type": "uint8"
+        }
+      ],
+      "name": "InvalidTypeValue",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotInitializing",
+      "type": "error"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -79,6 +110,32 @@ export interface TrivialEncryption$Type {
       "inputs": [
         {
           "indexed": false,
+          "internalType": "uint64",
+          "name": "version",
+          "type": "uint64"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Paused",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
           "internalType": "bytes32",
           "name": "handle",
           "type": "bytes32"
@@ -122,6 +179,19 @@ export interface TrivialEncryption$Type {
         }
       ],
       "name": "TrivialEncrypt",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "Unpaused",
       "type": "event"
     },
     {
@@ -258,6 +328,11 @@ export interface TrivialEncryption$Type {
             {
               "components": [
                 {
+                  "internalType": "string",
+                  "name": "warning",
+                  "type": "string"
+                },
+                {
                   "internalType": "bytes32",
                   "name": "sessionNonce",
                   "type": "bytes32"
@@ -299,13 +374,6 @@ export interface TrivialEncryption$Type {
         }
       ],
       "name": "claimHandle",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "cleanTransientStorage",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -435,6 +503,19 @@ export interface TrivialEncryption$Type {
         }
       ],
       "name": "isRevealed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "paused",
       "outputs": [
         {
           "internalType": "bool",

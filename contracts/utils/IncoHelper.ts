@@ -1,5 +1,5 @@
-import { AttestedComputeSupportedOps, Lightning } from '@inco/js/lite';
-import { handleTypes } from '@inco/js';
+import { AttestedComputeSupportedOps, Lightning } from '@inco/lightning-js/lite';
+import { handleTypes } from '@inco/lightning-js';
 import { publicClient } from './wallet';
 import type { WalletClient } from 'viem';
 import { bytesToHex, pad, toHex } from 'viem';
@@ -16,8 +16,15 @@ export async function getConfig() {
   console.log(`🔧 Initializing Inco config for chain: ${chainId}`);
 
   if (chainId === 84532) {
-    incoConfig = await Lightning.latest('demonet', 84532); // Base Sepolia
-  } 
+    // Base Sepolia (chain 84532). Pass reliable host-chain RPC(s) so the SDK's
+    // executor/verifier reads don't hit the heavily rate-limited public default.
+    const hostChainRpcUrls = [
+      process.env.BASE_SEPOLIA_RPC_URL,
+      "https://base-sepolia-rpc.publicnode.com",
+      "https://base-sepolia.drpc.org",
+    ].filter(Boolean) as string[];
+    incoConfig = await Lightning.baseSepoliaTestnet({ hostChainRpcUrls });
+  }
   else {
     throw new Error(`Unsupported chain ID: ${chainId}`);
   }

@@ -17,6 +17,11 @@ export interface IIncoVerifier$Type {
         {
           "components": [
             {
+              "internalType": "string",
+              "name": "warning",
+              "type": "string"
+            },
+            {
               "internalType": "bytes32",
               "name": "sessionNonce",
               "type": "bytes32"
@@ -72,7 +77,7 @@ export interface IIncoVerifier$Type {
           "components": [
             {
               "internalType": "bytes",
-              "name": "ecies_pubkey",
+              "name": "networkPubkey",
               "type": "bytes"
             }
           ],
@@ -218,6 +223,11 @@ export interface IIncoVerifier$Type {
             {
               "components": [
                 {
+                  "internalType": "string",
+                  "name": "warning",
+                  "type": "string"
+                },
+                {
                   "internalType": "bytes32",
                   "name": "sessionNonce",
                   "type": "bytes32"
@@ -314,6 +324,98 @@ export interface IIncoVerifier$Type {
         }
       ],
       "name": "isValidDecryptionAttestation",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "elistHandle",
+          "type": "bytes32"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "pairHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "commitment",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "value",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct ElementAttestationWithProof[]",
+          "name": "proofElements",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "proof",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "signatures",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "isValidEListDecryptionAttestation",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "handle",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes",
+              "name": "userCiphertext",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "encryptedSignature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct ReencryptionAttestation[]",
+          "name": "attestations",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "signatures",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "isValidReencryptionAttestation",
       "outputs": [
         {
           "internalType": "bool",
@@ -561,6 +663,42 @@ export interface IIncoVerifier$Type {
     {
       "inputs": [
         {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "handle",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes",
+              "name": "userCiphertext",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "encryptedSignature",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct ReencryptionAttestation",
+          "name": "attestation",
+          "type": "tuple"
+        }
+      ],
+      "name": "reencryptionAttestationDigest",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "signerAddress",
           "type": "address"
@@ -585,7 +723,13 @@ export interface IIncoVerifier$Type {
       "type": "function"
     },
     {
-      "inputs": [],
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        }
+      ],
       "name": "updateActiveVouchersSessionNonce",
       "outputs": [],
       "stateMutability": "nonpayable",
@@ -632,7 +776,7 @@ export interface IIncoVerifier$Type {
           "components": [
             {
               "internalType": "bytes",
-              "name": "ecies_pubkey",
+              "name": "networkPubkey",
               "type": "bytes"
             }
           ],

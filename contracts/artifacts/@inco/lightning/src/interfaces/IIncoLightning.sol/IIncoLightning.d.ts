@@ -13,6 +13,72 @@ export interface IIncoLightning$Type {
   "sourceName": "@inco/lightning/src/interfaces/IIncoLightning.sol",
   "abi": [
     {
+      "inputs": [],
+      "name": "EthInboundTransferUnsupported",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "length",
+          "type": "uint256"
+        }
+      ],
+      "name": "InputLengthTooShort",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
+        }
+      ],
+      "name": "InvalidInputVersion",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
+        }
+      ],
+      "name": "VersionAccepted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
+        }
+      ],
+      "name": "VersionRemoved",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
+        }
+      ],
+      "name": "addAcceptedVersion",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "bytes32",
@@ -146,6 +212,11 @@ export interface IIncoLightning$Type {
             {
               "components": [
                 {
+                  "internalType": "string",
+                  "name": "warning",
+                  "type": "string"
+                },
+                {
                   "internalType": "bytes32",
                   "name": "sessionNonce",
                   "type": "bytes32"
@@ -187,13 +258,6 @@ export interface IIncoLightning$Type {
         }
       ],
       "name": "claimHandle",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "cleanTransientStorage",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -609,25 +673,6 @@ export interface IIncoLightning$Type {
     {
       "inputs": [
         {
-          "internalType": "enum ETypes",
-          "name": "randType",
-          "type": "uint8"
-        }
-      ],
-      "name": "eRand",
-      "outputs": [
-        {
-          "internalType": "bytes32",
-          "name": "result",
-          "type": "bytes32"
-        }
-      ],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes32",
           "name": "upperBound",
           "type": "bytes32"
@@ -795,6 +840,19 @@ export interface IIncoLightning$Type {
     },
     {
       "inputs": [],
+      "name": "getEventCounter",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "getMajorVersion",
       "outputs": [
         {
@@ -814,6 +872,19 @@ export interface IIncoLightning$Type {
           "internalType": "string",
           "name": "",
           "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getNextEventId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -949,6 +1020,285 @@ export interface IIncoLightning$Type {
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        }
+      ],
+      "name": "lengthOf",
+      "outputs": [
+        {
+          "internalType": "uint16",
+          "name": "",
+          "type": "uint16"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "elist",
+          "name": "list",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "listAppend",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "elist",
+          "name": "lhs",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "elist",
+          "name": "rhs",
+          "type": "bytes32"
+        }
+      ],
+      "name": "listConcat",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "elist",
+          "name": "list",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint16",
+          "name": "i",
+          "type": "uint16"
+        }
+      ],
+      "name": "listGet",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "elist",
+          "name": "list",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "i",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "defaultValue",
+          "type": "bytes32"
+        }
+      ],
+      "name": "listGetOr",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "elist",
+          "name": "list",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "i",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "listInsert",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "start",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint16",
+          "name": "end",
+          "type": "uint16"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "listType",
+          "type": "uint8"
+        }
+      ],
+      "name": "listRange",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "elist",
+          "name": "list",
+          "type": "bytes32"
+        }
+      ],
+      "name": "listReverse",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "elist",
+          "name": "list",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "i",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "value",
+          "type": "bytes32"
+        }
+      ],
+      "name": "listSet",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "elist",
+          "name": "list",
+          "type": "bytes32"
+        }
+      ],
+      "name": "listShuffle",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "elist",
+          "name": "list",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "start",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint16",
+          "name": "len",
+          "type": "uint16"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "defaultValue",
+          "type": "bytes32"
+        }
+      ],
+      "name": "listSlice",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "result",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "majorVersion",
       "outputs": [
@@ -972,6 +1322,59 @@ export interface IIncoLightning$Type {
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "handles",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "listType",
+          "type": "uint8"
+        }
+      ],
+      "name": "newEList",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "newList",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes[]",
+          "name": "inputs",
+          "type": "bytes[]"
+        },
+        {
+          "internalType": "enum ETypes",
+          "name": "listType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "newEList",
+      "outputs": [
+        {
+          "internalType": "elist",
+          "name": "newList",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "payable",
       "type": "function"
     },
     {
@@ -1084,6 +1487,32 @@ export interface IIncoLightning$Type {
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "version",
+          "type": "uint16"
+        }
+      ],
+      "name": "removeAcceptedVersion",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "handle",
+          "type": "bytes32"
+        }
+      ],
+      "name": "reveal",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "salt",
       "outputs": [
@@ -1094,6 +1523,13 @@ export interface IIncoLightning$Type {
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "withdrawFees",
+      "outputs": [],
+      "stateMutability": "nonpayable",
       "type": "function"
     }
   ],
