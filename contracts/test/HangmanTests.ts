@@ -11,7 +11,7 @@ import {
   getConfig,
   getFee,
 } from "../utils/IncoHelper";
-import { HexString } from "@inco/js";
+import { HexString } from "@inco/lightning-js";
 
 const factoryAbi = factoryJson.abi as Abi;
 const gameAbi = gameJson.abi as Abi;
@@ -45,7 +45,7 @@ describe("Hangman Tests for word 'word'", function () {
     console.log(`✅ Factory deployed at: ${factoryAddress}`);
   });
 
-  it.only("Seed Word", async () => {
+  it("Seed Word", async () => {
     // 1) Prepare your list of 4-letter words
     const words = [
       "play",
@@ -84,7 +84,6 @@ describe("Hangman Tests for word 'word'", function () {
       "glad",
       "vile",
       "zone",
-      "test",
       "teal",
       "pony",
       "germ",

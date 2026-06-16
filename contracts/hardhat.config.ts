@@ -9,7 +9,7 @@ const BASE_SEPOLIA_RPC_URL = process.env.BASE_SEPOLIA_RPC_URL || "";
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.28",  // Specify the Solidity version
+    version: "0.8.30",  // Specify the Solidity version
     settings: {
       optimizer: {
         enabled: true,

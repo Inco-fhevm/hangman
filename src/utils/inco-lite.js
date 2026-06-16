@@ -1,13 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
-import {
-  Lightning,
-  generateSecp256k1Keypair,
-  getIncoVerifierContract,
-} from "@inco/js/lite";
-import { handleTypes } from "@inco/js";
-import { privateKeyToAccount } from "viem/accounts";
+import { Lightning } from "@inco/lightning-js/lite";
+import { handleTypes } from "@inco/lightning-js";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 
 let incoConfig = null;
 
@@ -37,8 +33,8 @@ export function SessionVoucherProvider({ children }) {
   const hasValidSession = useCallback((address) => {
     if (!address || !sessionVouchersByAddress.has(address)) return false;
 
-    const { voucher, keypair, expiration } = sessionVouchersByAddress.get(address);
-    return voucher && keypair && expiration > new Date();
+    const { voucher, ephemeralAccount, expiration } = sessionVouchersByAddress.get(address);
+    return voucher && ephemeralAccount && expiration > new Date();
   }, [sessionVouchersByAddress]);
 
   // Function to get session for specific address
@@ -116,7 +112,16 @@ export async function getConfig(chainId, incoEnv) {
   );
 
   if (chainId === 84532) {
-    incoConfig = await Lightning.latest(incoEnv, 84532); // Base Sepolia
+    // v1: explicit Base Sepolia factory (replaces Lightning.latest(env, 84532)).
+    // Pass reliable host-chain RPCs so the SDK's executor/verifier reads avoid
+    // the heavily rate-limited public default endpoint.
+    incoConfig = await Lightning.baseSepoliaTestnet({
+      hostChainRpcUrls: [
+        "https://base-sepolia-rpc.publicnode.com",
+        "https://base-sepolia.drpc.org",
+        "https://sepolia.base.org",
+      ],
+    });
   } else {
     throw new Error(`Unsupported chain ID: ${chainId}`);
   }
@@ -146,26 +151,19 @@ export function useInitializeSessionVoucher() {
       console.log(`Creating new session voucher for address: ${userAddress}`);
       const inco = await getConfig(chainId, incoEnv);
 
-      // Generate ephemeral keypair for session
-      const ephemeralKeypair = await generateSecp256k1Keypair();
-      const privateKey = `0x${ephemeralKeypair.kp.getPrivate("hex")}`;
-      console.log("Private key:", privateKey);
-
-      const ephemeralAccount = privateKeyToAccount(privateKey);
-
-      console.log("Ephemeral account:", ephemeralAccount);
-      console.log("Ephemeral account address:", ephemeralAccount.address);
+      // v1: the session key is a throwaway viem signing account. The voucher
+      // authorizes it to decrypt the user's handles until expiry — no wallet
+      // popup per read. (Replaces the secp256k1 keypair flow.)
+      const ephemeralAccount = privateKeyToAccount(generatePrivateKey());
+      console.log("Ephemeral session account address:", ephemeralAccount.address);
 
       const sessionVerifierAddress =
         "0xc34569efc25901bdd6b652164a2c8a7228b23005";
-      console.log("Inco verifier address:", sessionVerifierAddress);
 
       // Create voucher valid for 24 hours
       const expirationDate = new Date(Date.now() + 1000 * 60 * 60 * 24);
 
       console.log("🔑 Creating session voucher for attested decrypt...");
-      console.log("Ephemeral account address:", ephemeralAccount.address);
-      console.log("Inco verifier address:", sessionVerifierAddress);
 
       const sessionVoucher = await inco.grantSessionKeyAllowanceVoucher(
         walletClient,
@@ -174,17 +172,17 @@ export function useInitializeSessionVoucher() {
         sessionVerifierAddress
       );
 
-      console.log("✅ Session voucher created:", sessionVoucher);
+      console.log("✅ Session voucher created");
 
       // Store session data for this specific address
       const newSessionData = {
         voucher: sessionVoucher,
-        keypair: ephemeralKeypair,
+        ephemeralAccount,
         expiration: expirationDate,
       };
       setSessionForAddress(userAddress, newSessionData);
 
-      return { voucher: sessionVoucher, keypair: ephemeralKeypair };
+      return { voucher: sessionVoucher, ephemeralAccount };
     },
     [hasValidSession, getSessionForAddress, setSessionForAddress]
   );
@@ -230,16 +228,17 @@ export function useDecryptValue() {
       }
 
       const sessionData = getSessionForAddress(userAddress);
-      const { voucher, keypair } = sessionData;
+      const { voucher, ephemeralAccount } = sessionData;
 
-      // Use attested decrypt with voucher
+      // Use attested decrypt with voucher.
+      // v1 signature: (account, voucher, handles, options?) — no publicClient arg;
+      // the session key (ephemeralAccount) signs in place of the wallet.
       console.log("Decrypting handle:", handle, "type:", typeof handle);
       console.log("Using session voucher for address:", userAddress);
 
       const decrypted = await inco.attestedDecryptWithVoucher(
-        keypair,
+        ephemeralAccount,
         voucher,
-        publicClient,
         [handle]
       );
 

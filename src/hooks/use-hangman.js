@@ -91,6 +91,9 @@ export const useHangmanGame = () => {
         address
       );
 
+      // wait 2 sec for the session voucher to settle before creating the game
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const hash = await writeContractAsync({
         address: contracts.hangmanFactoryContract.address,
         abi: HANGMAN_FACTORY_ABI,

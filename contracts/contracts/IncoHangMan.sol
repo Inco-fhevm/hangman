@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause-Clear
 pragma solidity ^0.8.28;
 
-import "@inco/lightning/src/Lib.demonet.sol";
+import "@inco/lightning/src/Lib.sol";
 
 contract HangmanFactory {
     event GameCreated(address indexed player, address gameContract);
