@@ -1,10 +1,16 @@
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
-  // The @inco/lightning-js v1 bundle trips a panic in Next 14's SWC minifier
-  // (FRACTIONAL_BITWISE_OPERAND in the expression simplifier). Fall back to
-  // Terser for minification, which handles the SDK's BigInt/bitwise code fine.
-  swcMinify: false,
+  // Pin the workspace/tracing root to this project so the standalone build
+  // (used by the Docker image) traces files from here — not a stray parent
+  // lockfile that Next 16 might otherwise infer as the root.
+  outputFileTracingRoot: __dirname,
+  turbopack: { root: __dirname },
   env: {
     BASE_SEPOLIA_RPC: process.env.BASE_SEPOLIA_RPC,
   },

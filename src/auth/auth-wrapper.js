@@ -4,6 +4,7 @@ import Navbar from "@/components/navbar";
 import { useAuth } from "./auth-context";
 // import Loading from "@/components/loading";
 import ConnectWallet from "@/components/logout-screen/connect-wallet";
+import NetworkGuard from "@/components/network-guard";
 
 /**
  * @dev Wrapper component that conditionally renders content based on authentication state.
@@ -24,5 +25,5 @@ export default function AuthWrapper({ children }) {
     );
   }
 
-  return children;
+  return <NetworkGuard>{children}</NetworkGuard>;
 }

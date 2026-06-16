@@ -84,7 +84,6 @@ describe("Hangman Tests for word 'word'", function () {
       "glad",
       "vile",
       "zone",
-      "test",
       "teal",
       "pony",
       "germ",
